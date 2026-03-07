@@ -8,718 +8,622 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #6366f1; --primary-dark: #4f46e5; --primary-light: #e0e7ff;
-  --emerald: #10b981; --emerald-dark: #059669; --emerald-light: #d1fae5;
-  --rose: #f43f5e; --rose-dark: #e11d48; --rose-light: #ffe4e6;
-  --amber: #f59e0b; --amber-light: #fef3c7;
-  --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
-  --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b;
-  --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a;
-  --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.04);
+  --pri:#6366f1;--pri-d:#4f46e5;--pri-l:#e0e7ff;
+  --em:#10b981;--em-d:#059669;--em-l:#d1fae5;
+  --ro:#f43f5e;--ro-d:#e11d48;--ro-l:#ffe4e6;
+  --am:#f59e0b;--am-l:#fef3c7;
+  --vi:#7c3aed;--vi-l:#ede9fe;
+  --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;--s400:#94a3b8;
+  --s500:#64748b;--s700:#334155;--s800:#1e293b;--s900:#0f172a;
+  --rad:10px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Inter',system-ui,sans-serif; background:var(--slate-50); color:var(--slate-800); min-height:100vh; }
-.mono { font-family:'JetBrains Mono',monospace; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--s50);color:var(--s800)}
+.app{height:100%;display:flex;flex-direction:column}
 
 /* Header */
-header { background:linear-gradient(135deg,#312e81,#4f46e5,#6366f1); color:#fff; padding:28px 32px; }
-header .container { max-width:1400px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
-header h1 { font-size:26px; font-weight:800; letter-spacing:-.5px; }
-header h1 span { opacity:.6; font-weight:500; }
-header p { opacity:.75; font-size:14px; margin-top:2px; }
-.kbd-hints { display:flex; gap:8px; font-size:12px; opacity:.7; }
-.kbd { background:rgba(255,255,255,.15); padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:11px; }
+header{background:linear-gradient(135deg,#312e81,#4f46e5);color:#fff;padding:10px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h1{font-size:18px;font-weight:800;letter-spacing:-.3px;white-space:nowrap}
+header h1 span{opacity:.5;font-weight:500;font-size:14px}
+.kbd-hints{display:flex;gap:8px;font-size:11px;opacity:.65;flex-wrap:wrap}
+.kbd{background:rgba(255,255,255,.15);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px}
 
-/* Layout */
-.container { max-width:1400px; margin:0 auto; padding:0 16px; }
-.main { padding:16px 0 40px; }
+/* Top controls */
+.top-bar{flex-shrink:0;background:#fff;border-bottom:1px solid var(--s200);padding:8px 16px}
+.examples-row{display:flex;gap:6px;overflow-x:auto;padding:2px 0;scrollbar-width:thin}
+.examples-row::-webkit-scrollbar{height:4px}
+.examples-row::-webkit-scrollbar-thumb{background:var(--s300);border-radius:2px}
+.ex-btn{flex:0 0 auto;padding:5px 12px;background:var(--s100);border:1.5px solid var(--s200);border-radius:20px;
+  cursor:pointer;font-size:11px;font-weight:600;color:var(--s700);transition:all .12s;white-space:nowrap;font-family:inherit}
+.ex-btn:hover{border-color:var(--pri);color:var(--pri)}
+.ex-btn.active{background:var(--pri-l);border-color:var(--pri);color:var(--pri-d)}
+.input-row{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+#expr-input{flex:1;min-width:200px;padding:6px 12px;border:1.5px solid var(--s200);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;background:#fff}
+#expr-input:focus{border-color:var(--pri);outline:none;box-shadow:0 0 0 2px var(--pri-l)}
+.var-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.var-chip{display:inline-flex;align-items:center;gap:3px;background:var(--pri-l);padding:2px 4px 2px 10px;
+  border-radius:16px;font-size:12px;font-weight:600;color:var(--pri-d)}
+.var-chip input{width:52px;padding:2px 4px;border:1px solid var(--s300);border-radius:5px;
+  font-size:12px;text-align:center;font-family:'JetBrains Mono',monospace;background:#fff}
+.var-chip input:focus{border-color:var(--pri);outline:none}
+.btn{padding:6px 14px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;
+  transition:all .1s;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover:not(:disabled){background:var(--pri-d)}
+.btn-fwd{background:var(--em);color:#fff}.btn-fwd:hover:not(:disabled){background:var(--em-d)}
+.btn-bwd{background:var(--ro);color:#fff}.btn-bwd:hover:not(:disabled){background:var(--ro-d)}
+.btn-ghost{background:var(--s100);color:var(--s700)}.btn-ghost:hover:not(:disabled){background:var(--s200)}
+.btn-play{background:var(--pri);color:#fff;min-width:36px;justify-content:center;padding:6px 8px}
+.btn-play.playing{background:var(--am)}
 
-/* Examples */
-.examples-row { display:flex; gap:10px; overflow-x:auto; padding:16px 0 8px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.examples-row::-webkit-scrollbar { height:6px; }
-.examples-row::-webkit-scrollbar-thumb { background:var(--slate-300); border-radius:3px; }
-.example-card { flex:0 0 auto; width:180px; padding:12px 14px; background:#fff; border:2px solid var(--slate-200);
-  border-radius:var(--radius); cursor:pointer; transition:all .15s; scroll-snap-align:start; }
-.example-card:hover { border-color:var(--primary); box-shadow:var(--shadow-md); transform:translateY(-1px); }
-.example-card.active { border-color:var(--primary); background:var(--primary-light); }
-.example-card .name { font-size:13px; font-weight:700; color:var(--slate-800); margin-bottom:3px; }
-.example-card .expr { font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--slate-500); line-height:1.4;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.example-card .desc { font-size:11px; color:var(--slate-400); margin-top:4px; }
-
-/* Input bar */
-.input-bar { display:flex; gap:10px; align-items:stretch; margin-top:12px; flex-wrap:wrap; }
-.input-bar .expr-field { flex:1; min-width:280px; position:relative; }
-.input-bar .expr-field input { width:100%; padding:10px 14px; border:2px solid var(--slate-200); border-radius:var(--radius);
-  font-family:'JetBrains Mono',monospace; font-size:14px; transition:border-color .15s; background:#fff; }
-.input-bar .expr-field input:focus { border-color:var(--primary); outline:none; box-shadow:0 0 0 3px var(--primary-light); }
-.input-bar .expr-field label { position:absolute; top:-8px; left:10px; background:#fff; padding:0 4px;
-  font-size:11px; font-weight:600; color:var(--slate-500); }
-.btn { padding:9px 18px; border:none; border-radius:var(--radius); font-size:13px; font-weight:600; cursor:pointer;
-  transition:all .12s; font-family:inherit; display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
-.btn:active { transform:scale(.97); }
-.btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
-.btn-primary { background:var(--primary); color:#fff; }
-.btn-primary:hover:not(:disabled) { background:var(--primary-dark); }
-.btn-fwd { background:var(--emerald); color:#fff; }
-.btn-fwd:hover:not(:disabled) { background:var(--emerald-dark); }
-.btn-bwd { background:var(--rose); color:#fff; }
-.btn-bwd:hover:not(:disabled) { background:var(--rose-dark); }
-.btn-ghost { background:var(--slate-100); color:var(--slate-700); }
-.btn-ghost:hover:not(:disabled) { background:var(--slate-200); }
-.btn-play { background:var(--primary); color:#fff; min-width:44px; justify-content:center; }
-.btn-play.playing { background:var(--amber); }
-
-/* Variables */
-.var-bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px; min-height:24px; }
-.var-chip { display:inline-flex; align-items:center; gap:4px; background:var(--primary-light); padding:4px 6px 4px 12px;
-  border-radius:20px; font-size:13px; font-weight:600; color:var(--primary-dark); }
-.var-chip input { width:60px; padding:3px 6px; border:1.5px solid var(--slate-300); border-radius:6px;
-  font-size:13px; text-align:center; font-family:'JetBrains Mono',monospace; background:#fff; }
-.var-chip input:focus { border-color:var(--primary); outline:none; }
+/* Main area */
+.main-area{flex:1;display:grid;grid-template-columns:1fr 300px;gap:0;min-height:0;overflow:hidden}
+@media(max-width:900px){.main-area{grid-template-columns:1fr;grid-template-rows:1fr auto}}
 
 /* Graph */
-.graph-area { margin-top:14px; display:grid; grid-template-columns:1fr 340px; gap:14px; }
-@media(max-width:960px) { .graph-area { grid-template-columns:1fr; } }
-.graph-container { background:#fff; border-radius:var(--radius); border:2px solid var(--slate-200);
-  min-height:380px; overflow:auto; position:relative; box-shadow:var(--shadow); }
-#graph-svg { display:block; min-width:100%; min-height:380px; }
-.graph-empty { display:flex; align-items:center; justify-content:center; height:380px; color:var(--slate-400);
-  font-size:15px; flex-direction:column; gap:8px; }
-.graph-empty .icon { font-size:40px; opacity:.4; }
+.graph-wrap{position:relative;overflow:hidden;background:#fff;border-right:1px solid var(--s200)}
+#graph-svg{width:100%;height:100%;display:block}
+.graph-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--s400);
+  font-size:14px;flex-direction:column;gap:6px}
+.graph-empty .icon{font-size:36px;opacity:.3}
+
+/* Legend bar */
+.legend-bar{position:absolute;bottom:8px;left:8px;display:flex;gap:10px;font-size:10px;color:var(--s500);
+  background:rgba(255,255,255,.9);padding:4px 10px;border-radius:6px;backdrop-filter:blur(4px);border:1px solid var(--s200)}
+.legend-bar span{display:flex;align-items:center;gap:3px}
+.legend-bar .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
 
 /* Sidebar */
-.sidebar { display:flex; flex-direction:column; gap:12px; }
-.card { background:#fff; border-radius:var(--radius); border:1px solid var(--slate-200); box-shadow:var(--shadow); overflow:hidden; }
-.card-header { padding:10px 16px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
-  color:var(--slate-500); border-bottom:1px solid var(--slate-100); background:var(--slate-50); }
-.card-body { padding:14px 16px; }
+.sidebar{display:flex;flex-direction:column;overflow-y:auto;background:var(--s50);border-left:0}
+.card{border-bottom:1px solid var(--s200);background:#fff}
+.card-hd{padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
+  color:var(--s400);background:var(--s50);border-bottom:1px solid var(--s100)}
+.card-bd{padding:10px 14px}
 
 /* Controls */
-.controls-grid { display:flex; flex-wrap:wrap; gap:6px; }
-.controls-grid .divider { width:100%; height:1px; background:var(--slate-100); margin:4px 0; }
-.speed-row { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:var(--slate-500); }
-.speed-row input[type=range] { flex:1; accent-color:var(--primary); }
-
-/* Progress */
-.progress-bar { height:4px; background:var(--slate-100); border-radius:2px; margin-top:10px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:2px; transition:width .3s ease; }
-.progress-fill.fwd { background:var(--emerald); }
-.progress-fill.bwd { background:var(--rose); }
+.ctrl-row{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.speed-row{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;color:var(--s400)}
+.speed-row input[type=range]{flex:1;accent-color:var(--pri);height:4px}
+.progress{height:3px;background:var(--s100);border-radius:2px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .3s}
+.progress-fill.fwd{background:var(--em)}.progress-fill.bwd{background:var(--ro)}
 
 /* Info panel */
-.info-box { font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.7; white-space:pre-wrap;
-  padding:12px 14px; background:var(--slate-50); border-radius:8px; border:1px solid var(--slate-200);
-  min-height:60px; max-height:220px; overflow-y:auto; color:var(--slate-700); }
-.info-box.fwd { border-left:4px solid var(--emerald); }
-.info-box.bwd { border-left:4px solid var(--rose); }
-.info-box.err { border-left:4px solid var(--amber); background:var(--amber-light); }
+.info-box{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.65;white-space:pre-wrap;
+  padding:10px 12px;background:var(--s50);border:1px solid var(--s200);border-radius:6px;
+  min-height:40px;max-height:260px;overflow-y:auto;color:var(--s700)}
+.info-box.fwd{border-left:3px solid var(--em)}.info-box.bwd{border-left:3px solid var(--ro)}
+.info-box.err{border-left:3px solid var(--am);background:var(--am-l)}
 
-/* Gradient table */
-.grad-table { width:100%; border-collapse:collapse; font-size:13px; }
-.grad-table th { text-align:left; padding:6px 12px; font-size:11px; font-weight:700; text-transform:uppercase;
-  letter-spacing:.3px; color:var(--slate-400); border-bottom:2px solid var(--slate-200); }
-.grad-table td { padding:7px 12px; border-bottom:1px solid var(--slate-100); }
-.grad-table tr:hover td { background:var(--slate-50); }
-.val { color:var(--emerald-dark); font-weight:600; font-family:'JetBrains Mono',monospace; }
-.grad { color:var(--rose-dark); font-weight:600; font-family:'JetBrains Mono',monospace; }
-.var-name { font-weight:700; color:var(--slate-800); }
+/* Chain rule visual in info */
+.chain-rule{margin-top:6px;padding:8px 10px;background:#fff;border-radius:6px;border:1px solid var(--s200);font-size:11px;line-height:1.7}
+.cr-row{display:flex;align-items:center;gap:6px;margin:3px 0}
+.cr-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-weight:700;font-size:10px;font-family:'JetBrains Mono',monospace}
+.cr-upstream{background:var(--ro-l);color:var(--ro-d)}
+.cr-local{background:var(--am-l);color:#92400e}
+.cr-downstream{background:var(--vi-l);color:var(--vi)}
+.cr-arrow{color:var(--s400);font-weight:700}
 
-/* Legend */
-.legend { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--slate-500); margin-top:8px; padding:0 4px; }
-.legend span { display:flex; align-items:center; gap:5px; }
-.legend .swatch { width:14px; height:14px; border-radius:4px; display:inline-block; }
+/* Grad table */
+.grad-table{width:100%;border-collapse:collapse;font-size:12px}
+.grad-table th{text-align:left;padding:5px 10px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.3px;color:var(--s400);border-bottom:2px solid var(--s200)}
+.grad-table td{padding:5px 10px;border-bottom:1px solid var(--s100)}
+.grad-table tr:hover td{background:var(--s50)}
+.v-val{color:var(--em-d);font-weight:600;font-family:'JetBrains Mono',monospace}
+.v-grad{color:var(--ro-d);font-weight:600;font-family:'JetBrains Mono',monospace}
 
 /* Tooltip */
-#tooltip { position:fixed; display:none; background:var(--slate-900); color:#fff; padding:8px 12px; border-radius:8px;
-  font-size:12px; line-height:1.5; pointer-events:none; z-index:999; max-width:240px;
-  box-shadow:0 8px 24px rgba(0,0,0,.2); font-family:'JetBrains Mono',monospace; }
-#tooltip .tt-label { font-weight:700; color:var(--primary-light); }
-#tooltip .tt-val { color:#6ee7b7; }
-#tooltip .tt-grad { color:#fca5a5; }
+#tooltip{position:fixed;display:none;background:var(--s900);color:#fff;padding:6px 10px;border-radius:6px;
+  font-size:11px;line-height:1.4;pointer-events:none;z-index:999;max-width:220px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);font-family:'JetBrains Mono',monospace}
 
-/* SVG styles */
-svg text { font-family:'Inter',system-ui,sans-serif; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-.node-pulse { animation:pulse 1s ease-in-out infinite; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.fade-up { animation:fadeUp .3s ease forwards; }
+/* SVG */
+svg text{font-family:'Inter',system-ui,sans-serif}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .25s ease forwards}
+@keyframes pulseGlow{0%,100%{opacity:.7}50%{opacity:1}}
+.pulse-glow{animation:pulseGlow 1.2s ease-in-out infinite}
 
-/* Footer */
-footer { text-align:center; padding:24px; font-size:12px; color:var(--slate-400); }
-footer a { color:var(--primary); text-decoration:none; }
-footer a:hover { text-decoration:underline; }
+footer{text-align:center;padding:6px;font-size:10px;color:var(--s400);flex-shrink:0;background:#fff;border-top:1px solid var(--s200)}
+footer a{color:var(--pri);text-decoration:none}
 </style>
 </head>
 <body>
+<div class="app">
 
 <header>
-  <div class="container">
-    <div>
-      <h1>Autograd Playground <span>// interactive backprop</span></h1>
-      <p>Type an expression, build the computational graph, then step through forward & backward passes</p>
-    </div>
-    <div class="kbd-hints">
-      <span><span class="kbd">F</span> fwd step</span>
-      <span><span class="kbd">B</span> bwd step</span>
-      <span><span class="kbd">Space</span> play</span>
-      <span><span class="kbd">R</span> reset</span>
-    </div>
+  <h1>Autograd Playground <span>// interactive backprop</span></h1>
+  <div class="kbd-hints">
+    <span><span class="kbd">F</span> fwd</span>
+    <span><span class="kbd">B</span> bwd</span>
+    <span><span class="kbd">Space</span> play</span>
+    <span><span class="kbd">R</span> reset</span>
   </div>
 </header>
 
-<div class="container main">
-  <!-- Examples -->
+<div class="top-bar">
   <div class="examples-row" id="examples-row"></div>
-
-  <!-- Expression input -->
-  <div class="input-bar">
-    <div class="expr-field">
-      <label>Expression</label>
-      <input type="text" id="expr-input" placeholder="e.g.  sigmoid(w * x + b)  or  (x - y) * (x - y)" spellcheck="false" autocomplete="off">
-    </div>
-    <button class="btn btn-primary" id="btn-build">Build Graph</button>
+  <div class="input-row">
+    <input type="text" id="expr-input" placeholder="e.g.  sigmoid(w * x + b)" spellcheck="false" autocomplete="off">
+    <button class="btn btn-pri" id="btn-build">Build</button>
+    <div class="var-bar" id="var-bar"></div>
   </div>
-  <div class="var-bar" id="var-bar"></div>
+</div>
 
-  <!-- Graph + Sidebar -->
-  <div class="graph-area">
-    <div>
-      <div class="graph-container" id="graph-container">
-        <div class="graph-empty" id="graph-empty">
-          <div class="icon">&#x2B21;</div>
-          <div>Select an example or type an expression to get started</div>
+<div class="main-area">
+  <div class="graph-wrap" id="graph-wrap">
+    <div class="graph-empty" id="graph-empty">
+      <div class="icon">&#x2B21;</div>
+      <div>Select an example to get started</div>
+    </div>
+    <svg id="graph-svg" style="display:none"></svg>
+    <div class="legend-bar" id="legend" style="display:none">
+      <span><span class="sw" style="background:#e0e7ff;border:1.5px solid #818cf8"></span>Input</span>
+      <span><span class="sw" style="background:#fef3c7;border:1.5px solid #fbbf24"></span>Const</span>
+      <span><span class="sw" style="background:#f1f5f9;border:1.5px solid #94a3b8"></span>Op</span>
+      <span><span class="sw" style="background:#d1fae5;border:1.5px solid #34d399"></span>Fwd</span>
+      <span><span class="sw" style="background:#ffe4e6;border:1.5px solid #fb7185"></span>Bwd</span>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="card">
+      <div class="card-hd">Controls</div>
+      <div class="card-bd">
+        <div class="ctrl-row">
+          <button class="btn btn-ghost" id="btn-reset" disabled>Reset</button>
+          <button class="btn btn-play" id="btn-play" disabled>&#9654;</button>
+          <div style="flex:1"></div>
+          <button class="btn btn-fwd" id="btn-fwd-step" disabled>Fwd</button>
+          <button class="btn btn-fwd" id="btn-fwd-all" disabled>&raquo;</button>
+          <button class="btn btn-bwd" id="btn-bwd-step" disabled>Bwd</button>
+          <button class="btn btn-bwd" id="btn-bwd-all" disabled>&raquo;</button>
         </div>
-        <svg id="graph-svg" style="display:none"></svg>
-      </div>
-      <div class="legend" id="legend" style="display:none">
-        <span><span class="swatch" style="background:#e0e7ff;border:2px solid #6366f1"></span> Variable</span>
-        <span><span class="swatch" style="background:#fef3c7;border:2px solid #f59e0b"></span> Constant</span>
-        <span><span class="swatch" style="background:#f1f5f9;border:2px solid #94a3b8"></span> Operation</span>
-        <span><span class="swatch" style="background:#d1fae5;border:2px solid #10b981"></span> Forward</span>
-        <span><span class="swatch" style="background:#ffe4e6;border:2px solid #f43f5e"></span> Backward</span>
+        <div class="speed-row"><span>Fast</span><input type="range" id="speed" min="100" max="1500" value="500" step="100"><span>Slow</span></div>
+        <div class="progress"><div class="progress-fill" id="pbar"></div></div>
       </div>
     </div>
-
-    <div class="sidebar">
-      <!-- Controls -->
-      <div class="card">
-        <div class="card-header">Controls</div>
-        <div class="card-body">
-          <div class="controls-grid">
-            <button class="btn btn-ghost" id="btn-reset" disabled>Reset</button>
-            <button class="btn btn-play" id="btn-play" disabled title="Auto-play (Space)">&#9654;</button>
-          </div>
-          <div class="controls-grid" style="margin-top:6px">
-            <button class="btn btn-fwd" id="btn-fwd-step" disabled>Fwd Step</button>
-            <button class="btn btn-fwd" id="btn-fwd-all" disabled>Fwd All &raquo;</button>
-          </div>
-          <div class="controls-grid" style="margin-top:6px">
-            <button class="btn btn-bwd" id="btn-bwd-step" disabled>Bwd Step</button>
-            <button class="btn btn-bwd" id="btn-bwd-all" disabled>Bwd All &raquo;</button>
-          </div>
-          <div class="speed-row">
-            <span>Fast</span>
-            <input type="range" id="speed-slider" min="100" max="1500" value="500" step="100">
-            <span>Slow</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-        </div>
+    <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+      <div class="card-hd">Step Details</div>
+      <div class="card-bd" style="flex:1;overflow-y:auto;padding:0">
+        <div class="info-box" id="info-box">Pick an example above to start.</div>
+        <div id="chain-rule-area"></div>
       </div>
-
-      <!-- Info -->
-      <div class="card">
-        <div class="card-header">Step Details</div>
-        <div class="card-body" style="padding:0">
-          <div class="info-box" id="info-box">Select an example above or type your own expression to get started.</div>
-        </div>
-      </div>
-
-      <!-- Gradient table -->
-      <div class="card" id="grad-card" style="display:none">
-        <div class="card-header">Gradients</div>
-        <div class="card-body" style="padding:0">
-          <table class="grad-table" id="grad-table">
-            <thead><tr><th>Variable</th><th>Value</th><th style="text-align:right">Gradient</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+    </div>
+    <div class="card" id="grad-card" style="display:none">
+      <div class="card-hd">Gradients</div>
+      <div class="card-bd" style="padding:0">
+        <table class="grad-table" id="grad-table"><thead><tr><th>Variable</th><th>Value</th><th style="text-align:right">&nabla;</th></tr></thead><tbody></tbody></table>
       </div>
     </div>
   </div>
 </div>
 
-<div id="tooltip"></div>
+<footer>Built for <a href="https://nipunbatra.github.io/principles-ai-teaching/" target="_blank">Principles of AI</a> &middot; IIT Gandhinagar</footer>
+</div>
 
-<footer>
-  Built for <a href="https://nipunbatra.github.io/principles-ai-teaching/" target="_blank">Principles of AI</a> course at IIT Gandhinagar
-</footer>
+<div id="tooltip"></div>
 
 <script>
 // =====================================================================
 //  TOKENIZER
 // =====================================================================
-const TT={NUM:'NUM',ID:'ID',PLUS:'+',MINUS:'-',STAR:'*',SLASH:'/',LPAREN:'(',RPAREN:')',COMMA:',',EOF:'EOF'};
-function tokenize(expr){
-  const toks=[];let i=0;
-  while(i<expr.length){
-    if(/\s/.test(expr[i])){i++;continue}
-    if(/\d/.test(expr[i])||(expr[i]==='.'&&i+1<expr.length&&/\d/.test(expr[i+1]))){
-      let n='';while(i<expr.length&&(/\d/.test(expr[i])||expr[i]==='.'))n+=expr[i++];
-      toks.push({type:TT.NUM,value:n});continue;
-    }
-    if(/[a-zA-Z_]/.test(expr[i])){
-      let id='';while(i<expr.length&&/[a-zA-Z0-9_]/.test(expr[i]))id+=expr[i++];
-      toks.push({type:TT.ID,value:id});continue;
-    }
-    const ch=expr[i];
-    if('+-*/(),^'.includes(ch)){toks.push({type:ch==='+'?TT.PLUS:ch==='-'?TT.MINUS:ch==='*'?TT.STAR:ch==='/'?TT.SLASH:ch,value:ch});i++;continue}
-    throw new Error(`Unexpected character: '${ch}' at position ${i}`);
-  }
-  toks.push({type:TT.EOF,value:''});return toks;
-}
+const TT={NUM:'NUM',ID:'ID',PLUS:'+',MINUS:'-',STAR:'*',SLASH:'/',LP:'(',RP:')',COMMA:',',EOF:'EOF'};
+function tokenize(e){const t=[];let i=0;while(i<e.length){if(/\s/.test(e[i])){i++;continue}
+if(/\d/.test(e[i])||(e[i]==='.'&&i+1<e.length&&/\d/.test(e[i+1]))){let n='';while(i<e.length&&(/\d/.test(e[i])||e[i]==='.'))n+=e[i++];t.push({type:TT.NUM,value:n});continue}
+if(/[a-zA-Z_]/.test(e[i])){let n='';while(i<e.length&&/[a-zA-Z0-9_]/.test(e[i]))n+=e[i++];t.push({type:TT.ID,value:n});continue}
+const c=e[i];if('+-*/(),'.includes(c)){t.push({type:c==='+'?TT.PLUS:c==='-'?TT.MINUS:c==='*'?TT.STAR:c==='/'?TT.SLASH:c==='('?TT.LP:c===')'?TT.RP:TT.COMMA,value:c});i++;continue}
+throw new Error(`Bad char '${c}' at ${i}`);}t.push({type:TT.EOF,value:''});return t;}
 
 // =====================================================================
-//  PARSER  (recursive descent)
+//  PARSER
 // =====================================================================
-function parse(tokens){
-  let pos=0;
-  const peek=()=>tokens[pos], adv=()=>tokens[pos++];
-  const expect=t=>{const tk=adv();if(tk.type!==t)throw new Error(`Expected '${t}', got '${tk.type}'`);return tk};
-  function expr(){let l=term();while(peek().type===TT.PLUS||peek().type===TT.MINUS){const o=adv().type;l={type:'binop',op:o===TT.PLUS?'add':'sub',left:l,right:term()}}return l}
-  function term(){let l=unary();while(peek().type===TT.STAR||peek().type===TT.SLASH){const o=adv().type;l={type:'binop',op:o===TT.STAR?'mul':'div',left:l,right:unary()}}return l}
-  function unary(){if(peek().type===TT.MINUS){adv();return{type:'unary',op:'neg',operand:unary()}}return call()}
-  function call(){
-    if(peek().type===TT.ID&&pos+1<tokens.length&&tokens[pos+1].type===TT.LPAREN){
-      const name=adv().value;adv();const args=[];
-      if(peek().type!==TT.RPAREN){args.push(expr());while(peek().type===TT.COMMA){adv();args.push(expr())}}
-      expect(TT.RPAREN);return{type:'call',name,args};
-    }return primary();
-  }
-  function primary(){
-    const t=peek();
-    if(t.type===TT.NUM){adv();return{type:'num',value:parseFloat(t.value)}}
-    if(t.type===TT.ID){adv();return{type:'var',name:t.value}}
-    if(t.type===TT.LPAREN){adv();const e=expr();expect(TT.RPAREN);return e}
-    throw new Error(`Unexpected: '${t.value||t.type}'`);
-  }
-  const r=expr();if(peek().type!==TT.EOF)throw new Error(`Unexpected tokens after expression: '${peek().value}'`);return r;
-}
+function parse(t){let p=0;const pk=()=>t[p],ad=()=>t[p++],ex=c=>{const k=ad();if(k.type!==c)throw new Error(`Expected '${c}' got '${k.type}'`);return k};
+function expr(){let l=term();while(pk().type===TT.PLUS||pk().type===TT.MINUS){const o=ad().type;l={type:'bin',op:o===TT.PLUS?'add':'sub',l,r:term()}}return l}
+function term(){let l=un();while(pk().type===TT.STAR||pk().type===TT.SLASH){const o=ad().type;l={type:'bin',op:o===TT.STAR?'mul':'div',l,r:un()}}return l}
+function un(){if(pk().type===TT.MINUS){ad();return{type:'un',op:'neg',a:un()}}return call()}
+function call(){if(pk().type===TT.ID&&p+1<t.length&&t[p+1].type===TT.LP){const n=ad().value;ad();const a=[];
+if(pk().type!==TT.RP){a.push(expr());while(pk().type===TT.COMMA){ad();a.push(expr())}}ex(TT.RP);return{type:'fn',name:n,a}}return pri()}
+function pri(){const k=pk();if(k.type===TT.NUM){ad();return{type:'num',v:parseFloat(k.value)}}
+if(k.type===TT.ID){ad();return{type:'var',name:k.value}}if(k.type===TT.LP){ad();const e=expr();ex(TT.RP);return e}
+throw new Error(`Unexpected '${k.value||k.type}'`);}
+const r=expr();if(pk().type!==TT.EOF)throw new Error(`Extra tokens: '${pk().value}'`);return r;}
 
 // =====================================================================
-//  COMPUTATIONAL GRAPH
+//  GRAPH
 // =====================================================================
-class N{
-  constructor(id,type,op,label,inputs=[]){
-    this.id=id;this.type=type;this.op=op;this.label=label;this.inputs=inputs;
-    this.value=null;this.grad=0;this.rank=-1;this.x=0;this.y=0;
-    this.fwdDone=false;this.bwdDone=false;this.fwdActive=false;this.bwdActive=false;
-  }
-}
-const OP_SYM={add:'+',sub:'\u2212',mul:'\u00D7',div:'\u00F7'};
-const FUNCS=new Set(['exp','log','sigmoid','relu','tanh','sin','cos','sqrt','abs','neg']);
-function buildGraph(ast){
-  const nodes=[],vars={},varOrder=[];let nid=0;
-  function mk(type,op,label,inputs=[]){const n=new N(nid++,type,op,label,inputs);nodes.push(n);return n}
-  function walk(a){
-    if(a.type==='num'){const n=mk('const',null,fmtConst(a.value));n.value=a.value;return n}
-    if(a.type==='var'){if(!vars[a.name]){vars[a.name]=mk('input',null,a.name);varOrder.push(a.name)}return vars[a.name]}
-    if(a.type==='binop'){return mk('op',a.op,OP_SYM[a.op]||a.op,[walk(a.left),walk(a.right)])}
-    if(a.type==='unary'){return mk('op','neg','\u2212()',[walk(a.operand)])}
-    if(a.type==='call'){if(!FUNCS.has(a.name))throw new Error(`Unknown function: ${a.name}`);return mk('op',a.name,a.name,a.args.map(walk))}
-  }
-  const output=walk(ast);return{nodes,vars,varOrder,output};
-}
-function fmtConst(v){if(Number.isInteger(v)&&Math.abs(v)<1e4)return String(v);const s=v.toPrecision(5);return parseFloat(s).toString()}
-function fmt(v){if(v==null)return'?';if(!isFinite(v))return String(v);if(v===0)return'0';if(Math.abs(v)<1e-6)return v.toExponential(2);return parseFloat(v.toPrecision(6)).toString()}
+class GN{constructor(id,tp,op,label,ins=[]){this.id=id;this.tp=tp;this.op=op;this.label=label;this.ins=ins;
+this.val=null;this.grad=0;this.rank=-1;this.x=0;this.y=0;this.fD=false;this.bD=false;this.fA=false;this.bA=false}}
+const OPS={add:'+',sub:'\u2212',mul:'\u00D7',div:'\u00F7'};
+const FNS=new Set(['exp','log','sigmoid','relu','tanh','sin','cos','sqrt','abs','neg']);
+function buildG(ast){const ns=[],vs={},vo=[];let id=0;
+function mk(tp,op,lb,ins=[]){const n=new GN(id++,tp,op,lb,ins);ns.push(n);return n}
+function w(a){
+if(a.type==='num'){const n=mk('c',null,fc(a.v));n.val=a.v;return n}
+if(a.type==='var'){if(!vs[a.name]){vs[a.name]=mk('i',null,a.name);vo.push(a.name)}return vs[a.name]}
+if(a.type==='bin'){return mk('o',a.op,OPS[a.op]||a.op,[w(a.l),w(a.r)])}
+if(a.type==='un'){return mk('o','neg','\u2212()',[w(a.a)])}
+if(a.type==='fn'){if(!FNS.has(a.name))throw new Error(`Unknown function: ${a.name}`);return mk('o',a.name,a.name,a.a.map(w))}}
+return{ns,vs,vo,out:w(ast)}}
+function fc(v){if(Number.isInteger(v)&&Math.abs(v)<1e4)return String(v);return parseFloat(v.toPrecision(5)).toString()}
+function fm(v){if(v==null)return'?';if(!isFinite(v))return String(v);if(v===0)return'0';if(Math.abs(v)<1e-6)return v.toExponential(2);return parseFloat(v.toPrecision(5)).toString()}
 
 // =====================================================================
 //  FORWARD & BACKWARD
 // =====================================================================
-function compVal(n){
-  const a=n.inputs[0]?.value,b=n.inputs[1]?.value;
-  switch(n.op){
-    case'add':return a+b;case'sub':return a-b;case'mul':return a*b;case'div':return a/b;
-    case'neg':return -a;case'exp':return Math.exp(a);case'log':return Math.log(a);
-    case'sigmoid':return 1/(1+Math.exp(-a));case'relu':return Math.max(0,a);case'tanh':return Math.tanh(a);
-    case'sin':return Math.sin(a);case'cos':return Math.cos(a);case'sqrt':return Math.sqrt(a);case'abs':return Math.abs(a);
-  }
-}
-function localGrads(n){
-  const u=n.grad,a=n.inputs[0]?.value,b=n.inputs[1]?.value;
-  switch(n.op){
-    case'add':return[{n:n.inputs[0],g:u,l:1},{n:n.inputs[1],g:u,l:1}];
-    case'sub':return[{n:n.inputs[0],g:u,l:1},{n:n.inputs[1],g:-u,l:-1}];
-    case'mul':return[{n:n.inputs[0],g:u*b,l:b},{n:n.inputs[1],g:u*a,l:a}];
-    case'div':return[{n:n.inputs[0],g:u/b,l:1/b},{n:n.inputs[1],g:-u*a/(b*b),l:-a/(b*b)}];
-    case'neg':return[{n:n.inputs[0],g:-u,l:-1}];
-    case'exp':return[{n:n.inputs[0],g:u*n.value,l:n.value}];
-    case'log':return[{n:n.inputs[0],g:u/a,l:1/a}];
-    case'sigmoid':return[{n:n.inputs[0],g:u*n.value*(1-n.value),l:n.value*(1-n.value)}];
-    case'relu':return[{n:n.inputs[0],g:u*(a>0?1:0),l:a>0?1:0}];
-    case'tanh':return[{n:n.inputs[0],g:u*(1-n.value*n.value),l:1-n.value*n.value}];
-    case'sin':return[{n:n.inputs[0],g:u*Math.cos(a),l:Math.cos(a)}];
-    case'cos':return[{n:n.inputs[0],g:u*(-Math.sin(a)),l:-Math.sin(a)}];
-    case'sqrt':return[{n:n.inputs[0],g:u/(2*n.value),l:1/(2*n.value)}];
-    case'abs':return[{n:n.inputs[0],g:u*(a>=0?1:-1),l:a>=0?1:-1}];
-    default:return[];
-  }
-}
-function gradFormula(n){
-  switch(n.op){
-    case'add':return['d(a+b)/da = 1','d(a+b)/db = 1'];
-    case'sub':return['d(a-b)/da = 1','d(a-b)/db = -1'];
-    case'mul':return[`d(a\u00D7b)/da = b = ${fmt(n.inputs[1]?.value)}`,`d(a\u00D7b)/db = a = ${fmt(n.inputs[0]?.value)}`];
-    case'div':return[`d(a/b)/da = 1/b = ${fmt(1/n.inputs[1]?.value)}`,`d(a/b)/db = -a/b\u00B2 = ${fmt(-n.inputs[0]?.value/(n.inputs[1]?.value**2))}`];
-    case'neg':return['d(-a)/da = -1'];
-    case'exp':return[`d(exp a)/da = exp(a) = ${fmt(n.value)}`];
-    case'log':return[`d(ln a)/da = 1/a = ${fmt(1/n.inputs[0]?.value)}`];
-    case'sigmoid':return[`d\u03C3/da = \u03C3(1-\u03C3) = ${fmt(n.value*(1-n.value))}`];
-    case'relu':return[`d(relu)/da = ${n.inputs[0]?.value>0?'1 (active)':'0 (dead)'}`];
-    case'tanh':return[`d(tanh)/da = 1-tanh\u00B2 = ${fmt(1-n.value*n.value)}`];
-    default:return['?'];
-  }
-}
-function topoSort(out){const vis=new Set(),ord=[];function go(n){if(vis.has(n.id))return;vis.add(n.id);n.inputs.forEach(go);ord.push(n)}go(out);return ord}
+function compV(n){const a=n.ins[0]?.val,b=n.ins[1]?.val;switch(n.op){
+case'add':return a+b;case'sub':return a-b;case'mul':return a*b;case'div':return a/b;case'neg':return-a;
+case'exp':return Math.exp(a);case'log':return Math.log(a);case'sigmoid':return 1/(1+Math.exp(-a));
+case'relu':return Math.max(0,a);case'tanh':return Math.tanh(a);case'sin':return Math.sin(a);
+case'cos':return Math.cos(a);case'sqrt':return Math.sqrt(a);case'abs':return Math.abs(a)}}
+
+function lgrads(n){const u=n.grad,a=n.ins[0]?.val,b=n.ins[1]?.val;switch(n.op){
+case'add':return[{t:n.ins[0],g:u,l:1},{t:n.ins[1],g:u,l:1}];
+case'sub':return[{t:n.ins[0],g:u,l:1},{t:n.ins[1],g:-u,l:-1}];
+case'mul':return[{t:n.ins[0],g:u*b,l:b},{t:n.ins[1],g:u*a,l:a}];
+case'div':return[{t:n.ins[0],g:u/b,l:1/b},{t:n.ins[1],g:-u*a/(b*b),l:-a/(b*b)}];
+case'neg':return[{t:n.ins[0],g:-u,l:-1}];
+case'exp':return[{t:n.ins[0],g:u*n.val,l:n.val}];
+case'log':return[{t:n.ins[0],g:u/a,l:1/a}];
+case'sigmoid':return[{t:n.ins[0],g:u*n.val*(1-n.val),l:n.val*(1-n.val)}];
+case'relu':return[{t:n.ins[0],g:u*(a>0?1:0),l:a>0?1:0}];
+case'tanh':return[{t:n.ins[0],g:u*(1-n.val*n.val),l:1-n.val*n.val}];
+case'sin':return[{t:n.ins[0],g:u*Math.cos(a),l:Math.cos(a)}];
+case'cos':return[{t:n.ins[0],g:u*(-Math.sin(a)),l:-Math.sin(a)}];
+case'sqrt':return[{t:n.ins[0],g:u/(2*n.val),l:1/(2*n.val)}];
+case'abs':return[{t:n.ins[0],g:u*(a>=0?1:-1),l:a>=0?1:-1}];default:return[]}}
+
+function gfDesc(n){switch(n.op){
+case'add':return['d(a+b)/da = 1','d(a+b)/db = 1'];
+case'sub':return['d(a-b)/da = 1','d(a-b)/db = -1'];
+case'mul':return[`d(a\u00D7b)/da = b = ${fm(n.ins[1]?.val)}`,`d(a\u00D7b)/db = a = ${fm(n.ins[0]?.val)}`];
+case'div':return[`d(a/b)/da = 1/b`,`d(a/b)/db = -a/b\u00B2`];
+case'neg':return['d(-a)/da = -1'];case'exp':return[`d(e^a)/da = e^a = ${fm(n.val)}`];
+case'log':return[`d(ln a)/da = 1/a = ${fm(1/n.ins[0]?.val)}`];
+case'sigmoid':return[`\u03C3\'= \u03C3(1-\u03C3) = ${fm(n.val*(1-n.val))}`];
+case'relu':return[`relu\' = ${n.ins[0]?.val>0?'1':'0'}`];
+case'tanh':return[`tanh\' = 1-tanh\u00B2 = ${fm(1-n.val*n.val)}`];default:return['?']}}
+
+function topo(out){const v=new Set(),o=[];function go(n){if(v.has(n.id))return;v.add(n.id);n.ins.forEach(go);o.push(n)}go(out);return o}
 
 // =====================================================================
 //  LAYOUT
 // =====================================================================
-function layoutGraph(graph){
-  const{nodes}=graph;const memo={};
-  function rk(n){if(memo[n.id]!=null)return memo[n.id];if(!n.inputs.length)return memo[n.id]=0;return memo[n.id]=Math.max(...n.inputs.map(rk))+1}
-  nodes.forEach(n=>n.rank=rk(n));
-  const maxR=Math.max(...nodes.map(n=>n.rank));
-  const ranks=Array.from({length:maxR+1},()=>[]);nodes.forEach(n=>ranks[n.rank].push(n));
-  // Order within ranks by connected positions
-  for(let r=1;r<=maxR;r++)ranks[r].sort((a,b)=>{
-    const ay=a.inputs.reduce((s,n)=>s+n.y,0)/(a.inputs.length||1);
-    const by=b.inputs.reduce((s,n)=>s+n.y,0)/(b.inputs.length||1);return ay-by});
-  const H=150,V=76,M=55;
-  const maxN=Math.max(...ranks.map(r=>r.length));const tH=(maxN-1)*V;
-  for(let r=0;r<=maxR;r++){const g=ranks[r],gh=(g.length-1)*V,sy=M+(tH-gh)/2;g.forEach((n,i)=>{n.x=M+r*H;n.y=sy+i*V})}
-  // Re-sort rank 0 by consumers
-  const con={};nodes.forEach(n=>{if(n.rank>0)n.inputs.forEach(inp=>{if(inp.rank===0){(con[inp.id]=con[inp.id]||[]).push(n)}})});
+function layoutG(g){
+  const{ns}=g;const mem={};
+  function rk(n){if(mem[n.id]!=null)return mem[n.id];if(!n.ins.length)return mem[n.id]=0;return mem[n.id]=Math.max(...n.ins.map(rk))+1}
+  ns.forEach(n=>n.rank=rk(n));
+  const mxR=Math.max(...ns.map(n=>n.rank));
+  const ranks=Array.from({length:mxR+1},()=>[]);ns.forEach(n=>ranks[n.rank].push(n));
+  for(let r=1;r<=mxR;r++)ranks[r].sort((a,b)=>{
+    const ay=a.ins.reduce((s,n)=>s+n.y,0)/(a.ins.length||1);const by=b.ins.reduce((s,n)=>s+n.y,0)/(b.ins.length||1);return ay-by});
+  const H=150,V=76,M=50;const mxN=Math.max(...ranks.map(r=>r.length));const tH=(mxN-1)*V;
+  for(let r=0;r<=mxR;r++){const g=ranks[r],gh=(g.length-1)*V,sy=M+(tH-gh)/2;g.forEach((n,i)=>{n.x=M+r*H;n.y=sy+i*V})}
+  const con={};ns.forEach(n=>{if(n.rank>0)n.ins.forEach(inp=>{if(inp.rank===0)(con[inp.id]=con[inp.id]||[]).push(n)})});
   ranks[0].sort((a,b)=>{const ay=(con[a.id]||[]).reduce((s,n)=>s+n.y,0)/((con[a.id]||[{y:0}]).length);
     const by=(con[b.id]||[]).reduce((s,n)=>s+n.y,0)/((con[b.id]||[{y:0}]).length);return ay-by});
   {const g=ranks[0],gh=(g.length-1)*V,sy=M+(tH-gh)/2;g.forEach((n,i)=>{n.y=sy+i*V})}
-  return{w:M*2+maxR*H+80,h:M*2+tH+40};
-}
+  return{w:M*2+mxR*H+80,h:M*2+tH+40}}
 
 // =====================================================================
 //  SVG RENDERER
 // =====================================================================
 const NS='http://www.w3.org/2000/svg';
-function el(tag,attrs={},txt){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(txt!=null)e.textContent=txt;return e}
+function sv(tag,a={},txt){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);if(txt!=null)e.textContent=txt;return e}
 
-function edgePt(node,tx,ty){
-  const dx=tx-node.x,dy=ty-node.y,d=Math.hypot(dx,dy);if(d===0)return{x:node.x,y:node.y};
-  if(node.type==='op'){const r=26;return{x:node.x+dx/d*r,y:node.y+dy/d*r}}
-  const hw=46,hh=21,sx=dx?hw/Math.abs(dx):1e9,sy=dy?hh/Math.abs(dy):1e9,s=Math.min(sx,sy);
-  return{x:node.x+dx*s,y:node.y+dy*s};
-}
+function ePt(nd,tx,ty){const dx=tx-nd.x,dy=ty-nd.y,d=Math.hypot(dx,dy);if(d===0)return{x:nd.x,y:nd.y};
+if(nd.tp==='o'){const r=26;return{x:nd.x+dx/d*r,y:nd.y+dy/d*r}}
+const hw=46,hh=21,sx=dx?hw/Math.abs(dx):1e9,sy=dy?hh/Math.abs(dy):1e9,s=Math.min(sx,sy);
+return{x:nd.x+dx*s,y:nd.y+dy*s}}
 
-function renderGraph(svg,graph,dims){
-  svg.innerHTML='';svg.setAttribute('viewBox',`0 0 ${dims.w} ${dims.h}`);
-  svg.setAttribute('width',dims.w);svg.setAttribute('height',Math.max(dims.h,380));
-  // Defs
-  const defs=el('defs');
-  [[`ah`,'#94a3b8'],[`ah-g`,'#10b981'],[`ah-r`,'#f43f5e']].forEach(([id,c])=>{
-    const m=el('marker',{id,markerWidth:10,markerHeight:7,refX:9,refY:3.5,orient:'auto',markerUnits:'strokeWidth'});
-    m.appendChild(el('polygon',{points:'0 0.5, 10 3.5, 0 6.5',fill:c}));defs.appendChild(m);
-  });
-  const filt=el('filter',{id:'glow',x:'-50%',y:'-50%',width:'200%',height:'200%'});
-  filt.appendChild(el('feGaussianBlur',{stdDeviation:'4',result:'b'}));
-  const mg=el('feMerge');mg.appendChild(el('feMergeNode',{in:'b'}));mg.appendChild(el('feMergeNode',{in:'SourceGraphic'}));
-  filt.appendChild(mg);defs.appendChild(filt);svg.appendChild(defs);
+function renderG(svg,g,dims,bwdAnn){
+  svg.innerHTML='';
+  const pad=20;
+  svg.setAttribute('viewBox',`${-pad} ${-pad} ${dims.w+pad*2} ${dims.h+pad*2}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+
+  const defs=sv('defs');
+  [['ah','#94a3b8'],['ahg','#10b981'],['ahr','#f43f5e'],['ahv','#7c3aed']].forEach(([id,c])=>{
+    const m=sv('marker',{id,markerWidth:10,markerHeight:7,refX:9,refY:3.5,orient:'auto',markerUnits:'strokeWidth'});
+    m.appendChild(sv('polygon',{points:'0 0.5,10 3.5,0 6.5',fill:c}));defs.appendChild(m)});
+  const ft=sv('filter',{id:'gl',x:'-50%',y:'-50%',width:'200%',height:'200%'});
+  ft.appendChild(sv('feGaussianBlur',{stdDeviation:'4',result:'b'}));
+  const mg=sv('feMerge');mg.appendChild(sv('feMergeNode',{in:'b'}));mg.appendChild(sv('feMergeNode',{in:'SourceGraphic'}));
+  ft.appendChild(mg);defs.appendChild(ft);svg.appendChild(defs);
 
   // Edges
-  const eG=el('g');
-  graph.nodes.forEach(n=>n.inputs.forEach(inp=>{
-    const f=edgePt(inp,n.x,n.y),t=edgePt(n,inp.x,inp.y);
-    const active=n.bwdActive;const done=inp.fwdDone&&n.fwdDone;
-    const col=active?'#f43f5e':done?'#6ee7b7':'#cbd5e1';
-    const w=active?3:done?2:1.5;const ah=active?'url(#ah-r)':done?'url(#ah-g)':'url(#ah)';
-    eG.appendChild(el('line',{x1:f.x,y1:f.y,x2:t.x,y2:t.y,stroke:col,'stroke-width':w,'marker-end':ah}));
-  }));svg.appendChild(eG);
+  const eG=sv('g');
+  g.ns.forEach(n=>n.ins.forEach(inp=>{
+    const f=ePt(inp,n.x,n.y),t=ePt(n,inp.x,inp.y);
+    const isActive=n.bA;const done=inp.fD&&n.fD;
+    const col=isActive?'#fda4af':done?'#86efac':'#e2e8f0';
+    const w=done?1.8:1.5;const ah=done?'url(#ahg)':'url(#ah)';
+    eG.appendChild(sv('line',{x1:f.x,y1:f.y,x2:t.x,y2:t.y,stroke:col,'stroke-width':w,'marker-end':ah}))}));
+  svg.appendChild(eG);
 
   // Nodes
-  const nG=el('g');
-  graph.nodes.forEach(n=>{
-    const g=el('g',{transform:`translate(${n.x},${n.y})`,'data-nid':n.id,class:'graph-node',style:'cursor:pointer'});
+  const nG=sv('g');
+  g.ns.forEach(n=>{
+    const grp=sv('g',{transform:`translate(${n.x},${n.y})`,'data-nid':n.id,class:'gnode',style:'cursor:pointer'});
     let fill,stroke,sw=2;
-    if(n.fwdActive){fill='#a7f3d0';stroke='#059669';sw=3;g.setAttribute('filter','url(#glow)')}
-    else if(n.bwdActive){fill='#fecdd3';stroke='#e11d48';sw=3;g.setAttribute('filter','url(#glow)')}
-    else if(n.bwdDone&&n.type!=='const'){fill='#ffe4e6';stroke='#fb7185'}
-    else if(n.fwdDone){fill='#d1fae5';stroke='#34d399'}
-    else if(n.type==='input'){fill='#e0e7ff';stroke='#818cf8'}
-    else if(n.type==='const'){fill='#fef3c7';stroke='#fbbf24'}
+    if(n.fA){fill='#a7f3d0';stroke='#059669';sw=3;grp.setAttribute('filter','url(#gl)')}
+    else if(n.bA){fill='#fecdd3';stroke='#e11d48';sw=3;grp.setAttribute('filter','url(#gl)')}
+    else if(n.bD&&n.tp!=='c'){fill='#ffe4e6';stroke='#fb7185'}
+    else if(n.fD){fill='#d1fae5';stroke='#34d399'}
+    else if(n.tp==='i'){fill='#e0e7ff';stroke='#818cf8'}
+    else if(n.tp==='c'){fill='#fef3c7';stroke='#fbbf24'}
     else{fill='#f1f5f9';stroke='#94a3b8'}
 
-    if(n.type==='op'){
-      g.appendChild(el('circle',{r:26,fill,stroke,'stroke-width':sw}));
-    } else {
-      const w=Math.max(80,n.label.length*9+24);
-      g.appendChild(el('rect',{x:-w/2,y:-21,width:w,height:42,rx:10,fill,stroke,'stroke-width':sw}));
-    }
-    const fs=n.type==='op'?(n.label.length>4?10:n.label.length>3?12:15):13;
-    g.appendChild(el('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':fs,'font-weight':'700',fill:'#334155'},n.label));
+    if(n.tp==='o')grp.appendChild(sv('circle',{r:26,fill,stroke,'stroke-width':sw}));
+    else{const w=Math.max(80,n.label.length*9+24);grp.appendChild(sv('rect',{x:-w/2,y:-21,width:w,height:42,rx:10,fill,stroke,'stroke-width':sw}))}
+    const fs=n.tp==='o'?(n.label.length>4?10:n.label.length>3?12:15):13;
+    grp.appendChild(sv('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':fs,'font-weight':'700',fill:'#334155'},n.label));
 
-    if(n.fwdDone&&n.value!=null){
-      const vt=el('text',{'text-anchor':'middle',y:n.type==='op'?40:34,'font-size':11,'font-weight':'600',
-        fill:'#059669',class:'fade-up','font-family':'JetBrains Mono, monospace'},`${fmt(n.value)}`);
-      g.appendChild(vt);
+    if(n.fD&&n.val!=null){
+      grp.appendChild(sv('text',{'text-anchor':'middle',y:n.tp==='o'?40:34,'font-size':11,'font-weight':'600',
+        fill:'#059669',class:'fade-up','font-family':'JetBrains Mono,monospace'},fm(n.val)))}
+    if(n.bD&&n.tp!=='c'){
+      grp.appendChild(sv('text',{'text-anchor':'middle',y:n.tp==='o'?-34:-28,'font-size':10,'font-weight':'700',
+        fill:'#e11d48',class:'fade-up','font-family':'JetBrains Mono,monospace'},`\u2207 ${fm(n.grad)}`))
     }
-    if(n.bwdDone&&n.type!=='const'){
-      const gt=el('text',{'text-anchor':'middle',y:n.type==='op'?-34:-30,'font-size':10,'font-weight':'700',
-        fill:'#e11d48',class:'fade-up','font-family':'JetBrains Mono, monospace'},`\u2207 ${fmt(n.grad)}`);
-      g.appendChild(gt);
-    }
-    nG.appendChild(g);
-  });
+    nG.appendChild(grp)});
   svg.appendChild(nG);
 
+  // ======================== BACKWARD ANNOTATIONS ========================
+  if(bwdAnn){
+    const ann=sv('g',{class:'bwd-ann'});
+    const nd=bwdAnn.node;
+
+    // Upstream badge above active node
+    ann.appendChild(badge(nd.x,nd.y-(nd.tp==='o'?54:48),`upstream = ${fm(bwdAnn.upstream)}`,
+      '#e11d48','#fff',10));
+
+    // For each input: backward arrow + gradient badge
+    bwdAnn.items.forEach((item,idx)=>{
+      const inp=item.target;
+      const fx=ePt(nd,inp.x,inp.y),tx=ePt(inp,nd.x,nd.y);
+      const dx=tx.x-fx.x,dy=tx.y-fx.y,len=Math.hypot(dx,dy);
+      if(len<1)return;
+      const px=-dy/len,py=dx/len;
+      const off=11+idx*4; // offset more for 2nd input
+
+      // Dashed backward arrow
+      ann.appendChild(sv('line',{
+        x1:fx.x+px*off, y1:fx.y+py*off, x2:tx.x+px*off, y2:tx.y+py*off,
+        stroke:'#7c3aed','stroke-width':2.5,'stroke-dasharray':'7 4',
+        'marker-end':'url(#ahv)',opacity:.85,class:'pulse-glow'}));
+
+      // Local gradient badge at 40% along arrow
+      const t1=0.35;
+      const lx=fx.x+dx*t1+px*off*2.2, ly=fx.y+dy*t1+py*off*2.2;
+      ann.appendChild(badge(lx,ly,`local = ${fm(item.local)}`,
+        '#f59e0b','#78350f',9));
+
+      // Downstream badge at 70% along arrow
+      const t2=0.7;
+      const dx2=fx.x+dx*t2+px*off*2.2, dy2=fx.y+dy*t2+py*off*2.2;
+      ann.appendChild(badge(dx2,dy2,`${fm(bwdAnn.upstream)}\u00D7${fm(item.local)} = ${fm(item.downstream)}`,
+        '#7c3aed','#fff',9));
+    });
+
+    svg.appendChild(ann);
+  }
+
   // Tooltip events
-  nG.querySelectorAll('.graph-node').forEach(g=>{
-    g.addEventListener('mouseenter',e=>{const nid=parseInt(g.dataset.nid);showTooltip(e,graph.nodes.find(n=>n.id===nid))});
-    g.addEventListener('mousemove',e=>{const tt=document.getElementById('tooltip');tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'});
-    g.addEventListener('mouseleave',()=>{document.getElementById('tooltip').style.display='none'});
-  });
+  nG.querySelectorAll('.gnode').forEach(grp=>{
+    grp.addEventListener('mouseenter',e=>{const nid=parseInt(grp.dataset.nid);showTT(e,g.ns.find(n=>n.id===nid))});
+    grp.addEventListener('mousemove',e=>{const tt=$('tooltip');tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'});
+    grp.addEventListener('mouseleave',()=>{$('tooltip').style.display='none'})});
 }
 
-function showTooltip(e,n){
-  if(!n)return;const tt=document.getElementById('tooltip');
-  let html=`<span class="tt-label">${n.type==='op'?n.op:n.label}</span> <span style="opacity:.5">#${n.id}</span>`;
-  if(n.value!=null)html+=`<br>Value: <span class="tt-val">${fmt(n.value)}</span>`;
-  if(n.bwdDone&&n.type!=='const')html+=`<br>Gradient: <span class="tt-grad">${fmt(n.grad)}</span>`;
-  if(n.type==='op'&&n.inputs.length)html+=`<br>Inputs: ${n.inputs.map(i=>i.label).join(', ')}`;
-  tt.innerHTML=html;tt.style.display='block';tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px';
-}
+function badge(cx,cy,text,bg,fg,fs=10){
+  const g=sv('g');
+  const tw=text.length*fs*0.56+16,th=fs+10;
+  g.appendChild(sv('rect',{x:cx-tw/2,y:cy-th/2,width:tw,height:th,rx:th/2,fill:bg,opacity:.93,
+    filter:'drop-shadow(0 1px 3px rgba(0,0,0,0.2))'}));
+  g.appendChild(sv('text',{x:cx,y:cy+1,'text-anchor':'middle','dominant-baseline':'central',
+    'font-size':fs,'font-weight':'700',fill:fg,'font-family':'JetBrains Mono,monospace'},text));
+  return g}
+
+function showTT(e,n){if(!n)return;const tt=$('tooltip');
+let h=`<b style="color:#a5b4fc">${n.tp==='o'?n.op:n.label}</b> <span style="opacity:.4">#${n.id}</span>`;
+if(n.val!=null)h+=`<br>Val: <span style="color:#6ee7b7">${fm(n.val)}</span>`;
+if(n.bD&&n.tp!=='c')h+=`<br>Grad: <span style="color:#fca5a5">${fm(n.grad)}</span>`;
+tt.innerHTML=h;tt.style.display='block';tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'}
 
 // =====================================================================
 //  EXAMPLES
 // =====================================================================
-const EXAMPLES=[
-  {name:'Simple',        expr:'(x * y) + z',   vars:{x:2,y:3,z:4},         desc:'Multiply then add'},
-  {name:'MSE Loss',      expr:'(pred - target) * (pred - target)', vars:{pred:2.5,target:3}, desc:'Squared error loss'},
-  {name:'Sigmoid Neuron', expr:'sigmoid(w1 * x1 + w2 * x2 + b)', vars:{w1:0.5,w2:-0.3,x1:1,x2:2,b:0.1}, desc:'Single neuron'},
-  {name:'ReLU Neuron',   expr:'relu(w * x + b)', vars:{w:1.5,x:-1,b:0.5},   desc:'ReLU activation'},
-  {name:'Logistic Loss',  expr:'-log(sigmoid(w * x + b))', vars:{w:1,x:2,b:-1}, desc:'Binary cross-entropy'},
-  {name:'CE (expanded)',  expr:'-log(1 / (1 + exp(-(theta0 + theta1 * x1 + theta2 * x2))))', vars:{theta0:1,theta1:1,theta2:2,x1:1,x2:2}, desc:'Full logistic loss'},
-  {name:'Softplus',      expr:'log(1 + exp(x))', vars:{x:2},                desc:'Smooth ReLU approx'},
-  {name:'Polynomial',    expr:'x*x*x - 2*x*x + 3*x + 1', vars:{x:2},       desc:'Cubic polynomial'},
-  {name:'Huber-like',    expr:'sqrt(x * x + 0.01)', vars:{x:0.5},           desc:'Smooth L1 loss'},
-  {name:'Tanh Neuron',   expr:'tanh(w * x + b)', vars:{w:1,x:0.5,b:0},      desc:'Tanh activation'},
+const EX=[
+  {n:'Simple',        e:'(x * y) + z',   v:{x:2,y:3,z:4},         d:'Multiply then add'},
+  {n:'MSE Loss',      e:'(pred - target) * (pred - target)', v:{pred:2.5,target:3}, d:'Squared error'},
+  {n:'Sigmoid Neuron', e:'sigmoid(w1 * x1 + w2 * x2 + b)', v:{w1:0.5,w2:-0.3,x1:1,x2:2,b:0.1}, d:'Single neuron'},
+  {n:'ReLU Neuron',   e:'relu(w * x + b)', v:{w:1.5,x:-1,b:0.5},   d:'ReLU activation'},
+  {n:'Logistic Loss',  e:'-log(sigmoid(w * x + b))', v:{w:1,x:2,b:-1}, d:'Binary cross-entropy'},
+  {n:'CE (expanded)',  e:'-log(1 / (1 + exp(-(theta0 + theta1 * x1 + theta2 * x2))))', v:{theta0:1,theta1:1,theta2:2,x1:1,x2:2}, d:'Full logistic loss'},
+  {n:'Softplus',      e:'log(1 + exp(x))', v:{x:2},                d:'Smooth ReLU'},
+  {n:'Polynomial',    e:'x*x*x - 2*x*x + 3*x + 1', v:{x:2},       d:'Cubic x\u00B3-2x\u00B2+3x+1'},
+  {n:'Huber-like',    e:'sqrt(x * x + 0.01)', v:{x:0.5},           d:'Smooth L1'},
+  {n:'Tanh Neuron',   e:'tanh(w * x + b)', v:{w:1,x:0.5,b:0},      d:'Tanh activation'},
 ];
 
 // =====================================================================
-//  APP STATE & CONTROLLER
+//  APP
 // =====================================================================
-let S={graph:null,topo:[],fwdIdx:0,bwdIdx:0,phase:'idle',dims:null};
-let playTimer=null;
+let S={g:null,tp:[],fi:0,bi:0,ph:'idle',dm:null,bwdAnn:null};
+let pTimer=null;
 const $=id=>document.getElementById(id);
 
-function initExamples(){
-  const row=$('examples-row');
-  EXAMPLES.forEach((ex,i)=>{
-    const card=document.createElement('div');card.className='example-card';card.dataset.idx=i;
-    card.innerHTML=`<div class="name">${ex.name}</div><div class="expr">${ex.expr}</div><div class="desc">${ex.desc}</div>`;
-    card.addEventListener('click',()=>loadExample(i));
-    row.appendChild(card);
-  });
-}
+function initEx(){const row=$('examples-row');EX.forEach((x,i)=>{
+  const b=document.createElement('button');b.className='ex-btn';b.textContent=x.n;b.title=x.d;
+  b.addEventListener('click',()=>loadEx(i));row.appendChild(b)})}
 
-function loadExample(i){
-  document.querySelectorAll('.example-card').forEach((c,j)=>c.classList.toggle('active',j===i));
-  $('expr-input').value=EXAMPLES[i].expr;
-  buildFromInput(EXAMPLES[i].vars);
-}
+function loadEx(i){document.querySelectorAll('.ex-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+$('expr-input').value=EX[i].e;buildFrom(EX[i].v)}
 
-function buildFromInput(defaultVars){
-  const expr=$('expr-input').value.trim();
-  if(!expr){showInfo('Type an expression or select an example.','');return}
-  stopPlay();
-  try{
-    const ast=parse(tokenize(expr));
-    const graph=buildGraph(ast);
-
-    // Variable UI
+function buildFrom(dv){
+  const expr=$('expr-input').value.trim();if(!expr){info('Type an expression.','');return}
+  stopP();
+  try{const ast=parse(tokenize(expr));const g=buildG(ast);
     const bar=$('var-bar');bar.innerHTML='';
-    graph.varOrder.forEach(name=>{
-      const chip=document.createElement('div');chip.className='var-chip';
-      const lbl=document.createElement('span');lbl.textContent=name+' =';chip.appendChild(lbl);
-      const inp=document.createElement('input');inp.type='number';inp.step='any';
-      inp.value=defaultVars?.[name]??1;inp.dataset.v=name;
-      inp.addEventListener('change',()=>resetState());
-      chip.appendChild(inp);bar.appendChild(chip);
-    });
-
-    S.graph=graph;S.topo=topoSort(graph.output);S.dims=layoutGraph(graph);
-    resetState();
+    g.vo.forEach(nm=>{const ch=document.createElement('div');ch.className='var-chip';
+      const sp=document.createElement('span');sp.textContent=nm+' =';ch.appendChild(sp);
+      const inp=document.createElement('input');inp.type='number';inp.step='any';inp.value=dv?.[nm]??1;
+      inp.dataset.v=nm;inp.addEventListener('change',()=>resetS());ch.appendChild(inp);bar.appendChild(ch)});
+    S.g=g;S.tp=topo(g.out);S.dm=layoutG(g);resetS();
     $('graph-empty').style.display='none';$('graph-svg').style.display='block';$('legend').style.display='flex';
-    showInfo('Graph built! Click "Fwd Step" or press F to start the forward pass.','');
-  }catch(e){showInfo('Parse error: '+e.message,'err');}
-}
+    info('Graph built! Press F or click Fwd to start.','');
+  }catch(e){info('Error: '+e.message,'err')}}
 
-function resetState(){
-  if(!S.graph)return;stopPlay();
-  S.fwdIdx=0;S.bwdIdx=0;S.phase='idle';
-  S.graph.nodes.forEach(n=>{n.fwdDone=false;n.bwdDone=false;n.fwdActive=false;n.bwdActive=false;n.grad=0;
-    if(n.type==='const')n.value=parseFloat(n.value);else if(n.type==='input')n.value=null;else n.value=null;
-  });
-  // Read var values
-  $('var-bar').querySelectorAll('input').forEach(inp=>{
-    const vn=inp.dataset.v;if(S.graph.vars[vn])S.graph.vars[vn].value=parseFloat(inp.value)||0;
-  });
-  updateUI();renderGraph($('graph-svg'),S.graph,S.dims);
-  $('grad-card').style.display='none';
-}
+function resetS(){if(!S.g)return;stopP();S.fi=0;S.bi=0;S.ph='idle';S.bwdAnn=null;
+  S.g.ns.forEach(n=>{n.fD=false;n.bD=false;n.fA=false;n.bA=false;n.grad=0;
+    if(n.tp==='c')n.val=n.val;else if(n.tp==='i')n.val=null;else n.val=null});
+  $('var-bar').querySelectorAll('input').forEach(inp=>{const nm=inp.dataset.v;if(S.g.vs[nm])S.g.vs[nm].val=parseFloat(inp.value)||0});
+  upUI();renderG($('graph-svg'),S.g,S.dm,null);$('grad-card').style.display='none';$('chain-rule-area').innerHTML=''}
 
 function fwdStep(){
-  if(!S.graph)return;
-  if(S.phase==='idle')S.phase='forward';
-  if(S.phase!=='forward')return;
-  S.graph.nodes.forEach(n=>n.fwdActive=false);
-  if(S.fwdIdx>=S.topo.length){S.phase='fwd_done';updateUI();return}
-  const node=S.topo[S.fwdIdx];
-  if(node.type!=='input'&&node.type!=='const')node.value=compVal(node);
-  node.fwdDone=true;node.fwdActive=true;
-  if(node.type==='input')showInfo(`Forward ${S.fwdIdx+1}/${S.topo.length}:  Input "${node.label}" = ${fmt(node.value)}`,'fwd');
-  else if(node.type==='const')showInfo(`Forward ${S.fwdIdx+1}/${S.topo.length}:  Constant = ${fmt(node.value)}`,'fwd');
-  else showInfo(`Forward ${S.fwdIdx+1}/${S.topo.length}:  ${descOp(node)}\n= ${fmt(node.value)}`,'fwd');
-  S.fwdIdx++;if(S.fwdIdx>=S.topo.length)S.phase='fwd_done';
-  updateUI();renderGraph($('graph-svg'),S.graph,S.dims);
-}
+  if(!S.g)return;if(S.ph==='idle')S.ph='forward';if(S.ph!=='forward')return;
+  S.g.ns.forEach(n=>n.fA=false);S.bwdAnn=null;
+  if(S.fi>=S.tp.length){S.ph='fwd_done';upUI();return}
+  const nd=S.tp[S.fi];
+  if(nd.tp!=='i'&&nd.tp!=='c')nd.val=compV(nd);
+  nd.fD=true;nd.fA=true;
+  if(nd.tp==='i')info(`Fwd ${S.fi+1}/${S.tp.length}: Input "${nd.label}" = ${fm(nd.val)}`,'fwd');
+  else if(nd.tp==='c')info(`Fwd ${S.fi+1}/${S.tp.length}: Const = ${fm(nd.val)}`,'fwd');
+  else info(`Fwd ${S.fi+1}/${S.tp.length}: ${descOp(nd)}\n= ${fm(nd.val)}`,'fwd');
+  $('chain-rule-area').innerHTML='';
+  S.fi++;if(S.fi>=S.tp.length)S.ph='fwd_done';
+  upUI();renderG($('graph-svg'),S.g,S.dm,null)}
 
-function fwdAll(){
-  if(!S.graph)return;stopPlay();
-  S.graph.nodes.forEach(n=>n.fwdActive=false);
-  while(S.fwdIdx<S.topo.length){const n=S.topo[S.fwdIdx];if(n.type!=='input'&&n.type!=='const')n.value=compVal(n);n.fwdDone=true;S.fwdIdx++}
-  S.phase='fwd_done';
-  showInfo(`Forward pass complete.\nOutput = ${fmt(S.graph.output.value)}\n\nPress "Bwd Step" or B to compute gradients.`,'fwd');
-  updateUI();renderGraph($('graph-svg'),S.graph,S.dims);
-}
+function fwdAll(){if(!S.g)return;stopP();S.g.ns.forEach(n=>n.fA=false);S.bwdAnn=null;
+  while(S.fi<S.tp.length){const n=S.tp[S.fi];if(n.tp!=='i'&&n.tp!=='c')n.val=compV(n);n.fD=true;S.fi++}
+  S.ph='fwd_done';info(`Forward complete. Output = ${fm(S.g.out.val)}\n\nPress B or Bwd to compute gradients.`,'fwd');
+  $('chain-rule-area').innerHTML='';upUI();renderG($('graph-svg'),S.g,S.dm,null)}
 
 function bwdStep(){
-  if(!S.graph)return;
-  if(S.phase==='fwd_done'){S.phase='backward';S.graph.output.grad=1;S.bwdIdx=0}
-  if(S.phase!=='backward')return;
-  S.graph.nodes.forEach(n=>n.bwdActive=false);
-  const rev=[...S.topo].reverse();
-  if(S.bwdIdx>=rev.length){S.phase='bwd_done';updateUI();return}
-  const node=rev[S.bwdIdx];node.bwdActive=true;node.bwdDone=true;
+  if(!S.g)return;
+  if(S.ph==='fwd_done'){S.ph='backward';S.g.out.grad=1;S.bi=0}
+  if(S.ph!=='backward')return;
+  S.g.ns.forEach(n=>n.bA=false);
+  const rev=[...S.tp].reverse();
+  if(S.bi>=rev.length){S.ph='bwd_done';upUI();return}
+  const nd=rev[S.bi];nd.bA=true;nd.bD=true;
 
-  if(node.type==='op'){
-    const grads=localGrads(node),formulas=gradFormula(node);
-    const inputLabel=(n,i)=>{
-      const pos=node.inputs.length>1?['left','right'][i]+' input':'input';
-      return`${pos} "${n.label}" (val=${fmt(n.value)})`;
-    };
-    let info=`Backward ${S.bwdIdx+1}/${rev.length}:  ${node.op} node (#${node.id})\n`;
-    info+=`Accumulated gradient: ${fmt(node.grad)}\n\n`;
-    grads.forEach((gr,i)=>{
-      gr.n.grad+=gr.g;
-      info+=`  \u2192 ${inputLabel(gr.n,i)}\n`;
-      info+=`    ${formulas[i]||''}\n`;
-      info+=`    upstream(${fmt(node.grad)}) \u00D7 local(${fmt(gr.l)}) = ${fmt(gr.g)}\n\n`;
-    });
-    showInfo(info,'bwd');
-  } else if(node.type==='input'){
-    showInfo(`Backward ${S.bwdIdx+1}/${rev.length}:  Variable "${node.label}"\nFinal gradient: ${fmt(node.grad)}`,'bwd');
+  if(nd.tp==='o'){
+    const upstream=nd.grad;
+    const grads=lgrads(nd),descs=gfDesc(nd);
+    const items=grads.map((gr,i)=>({target:gr.t,local:gr.l,downstream:gr.g,desc:descs[i]||''}));
+
+    // Store annotation for SVG rendering
+    S.bwdAnn={node:nd,upstream,items};
+
+    // Propagate
+    grads.forEach(gr=>gr.t.grad+=gr.g);
+
+    // Info text
+    const posLabel=(n,i)=>{const p=nd.ins.length>1?['Left','Right'][i]:'';return`${p} "${n.label}" (=${fm(n.val)})`};
+    let txt=`Bwd ${S.bi+1}/${rev.length}: ${nd.op} node\n`;
+    txt+=`Accumulated grad = ${fm(upstream)}\n`;
+    info(txt,'bwd');
+
+    // Chain rule visual in sidebar
+    renderChainRule(nd,upstream,items);
+  } else if(nd.tp==='i'){
+    S.bwdAnn=null;
+    info(`Bwd ${S.bi+1}/${rev.length}: Variable "${nd.label}"\n\u2207 = ${fm(nd.grad)}`,'bwd');
+    $('chain-rule-area').innerHTML='';
   } else {
-    showInfo(`Backward ${S.bwdIdx+1}/${rev.length}:  Constant ${node.label}\nGradient: ${fmt(node.grad)} (not trainable)`,'bwd');
+    S.bwdAnn=null;
+    info(`Bwd ${S.bi+1}/${rev.length}: Constant ${nd.label}`,'bwd');
+    $('chain-rule-area').innerHTML='';
   }
-  S.bwdIdx++;if(S.bwdIdx>=rev.length){S.phase='bwd_done';showGradTable()}
-  updateUI();renderGraph($('graph-svg'),S.graph,S.dims);
-}
+  S.bi++;if(S.bi>=rev.length){S.ph='bwd_done';showGT()}
+  upUI();renderG($('graph-svg'),S.g,S.dm,S.bwdAnn)}
 
-function bwdAll(){
-  if(!S.graph)return;stopPlay();
-  if(S.phase==='fwd_done'){S.phase='backward';S.graph.output.grad=1;S.bwdIdx=0}
-  if(S.phase!=='backward')return;
-  S.graph.nodes.forEach(n=>n.bwdActive=false);
-  const rev=[...S.topo].reverse();
-  while(S.bwdIdx<rev.length){
-    const node=rev[S.bwdIdx];node.bwdDone=true;
-    if(node.type==='op')localGrads(node).forEach(gr=>gr.n.grad+=gr.g);
-    S.bwdIdx++;
-  }
-  S.phase='bwd_done';
-  showInfo(`Backward pass complete! All gradients computed.\n\nSee the gradient table below.`,'bwd');
-  showGradTable();updateUI();renderGraph($('graph-svg'),S.graph,S.dims);
-}
+function bwdAll(){if(!S.g)return;stopP();
+  if(S.ph==='fwd_done'){S.ph='backward';S.g.out.grad=1;S.bi=0}
+  if(S.ph!=='backward')return;
+  S.g.ns.forEach(n=>n.bA=false);S.bwdAnn=null;
+  const rev=[...S.tp].reverse();
+  while(S.bi<rev.length){const nd=rev[S.bi];nd.bD=true;
+    if(nd.tp==='o')lgrads(nd).forEach(gr=>gr.t.grad+=gr.g);S.bi++}
+  S.ph='bwd_done';info('Backward complete! All gradients computed.','bwd');
+  $('chain-rule-area').innerHTML='';showGT();upUI();renderG($('graph-svg'),S.g,S.dm,null)}
 
-function togglePlay(){
-  if(playTimer){stopPlay();return}
-  const delay=parseInt($('speed-slider').value);
-  $('btn-play').classList.add('playing');$('btn-play').innerHTML='&#9646;&#9646;';
-  playTimer=setInterval(()=>{
-    if(S.phase==='idle'||S.phase==='forward')fwdStep();
-    else if(S.phase==='fwd_done'||S.phase==='backward')bwdStep();
-    if(S.phase==='bwd_done')stopPlay();
-  },delay);
-}
-function stopPlay(){if(playTimer){clearInterval(playTimer);playTimer=null}$('btn-play').classList.remove('playing');$('btn-play').innerHTML='&#9654;'}
+function renderChainRule(nd,upstream,items){
+  const area=$('chain-rule-area');
+  let h='<div class="chain-rule"><div style="font-weight:700;margin-bottom:6px;color:#334155">Chain Rule at this node:</div>';
+  items.forEach((it,i)=>{
+    const label=nd.ins.length>1?['Left','Right'][i]+': ':'';
+    h+=`<div class="cr-row">
+      <span style="color:#64748b;font-size:10px;min-width:36px">${label}</span>
+      <span class="cr-pill cr-upstream">${fm(upstream)}</span>
+      <span class="cr-arrow">\u00D7</span>
+      <span class="cr-pill cr-local">${fm(it.local)}</span>
+      <span class="cr-arrow">=</span>
+      <span class="cr-pill cr-downstream">${fm(it.downstream)}</span>
+      <span class="cr-arrow">\u2192</span>
+      <span style="font-weight:600;font-size:11px">${it.target.label}</span>
+    </div>`;
+    h+=`<div style="font-size:10px;color:#94a3b8;margin:0 0 4px 40px">${it.desc}</div>`;
+  });
+  h+=`<div style="margin-top:6px;padding-top:6px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;font-weight:600">
+    <span class="cr-pill cr-upstream">upstream</span> \u00D7
+    <span class="cr-pill cr-local">local</span> =
+    <span class="cr-pill cr-downstream">downstream</span></div></div>`;
+  area.innerHTML=h}
 
-function descOp(node){
-  const nm=i=>{const n=node.inputs[i];return n.type==='input'?n.label:n.type==='const'?n.label:fmt(n.value)};
-  const vl=i=>fmt(node.inputs[i].value);
-  if(node.inputs.length===2)return`${nm(0)} ${node.label} ${nm(1)}  =  ${vl(0)} ${node.label} ${vl(1)}`;
-  if(node.inputs.length===1)return`${node.op}(${nm(0)})  =  ${node.op}(${vl(0)})`;
-  return`${node.op}(${node.inputs.map((_,i)=>vl(i)).join(', ')})`;
-}
+function descOp(nd){
+  const nm=i=>{const n=nd.ins[i];return n.tp==='i'?n.label:n.tp==='c'?n.label:fm(n.val)};
+  const vl=i=>fm(nd.ins[i].val);
+  if(nd.ins.length===2)return`${nm(0)} ${nd.label} ${nm(1)}  =  ${vl(0)} ${nd.label} ${vl(1)}`;
+  if(nd.ins.length===1)return`${nd.op}(${nm(0)})  =  ${nd.op}(${vl(0)})`;
+  return`${nd.op}(${nd.ins.map((_,i)=>vl(i)).join(', ')})`}
 
-function showInfo(txt,type){const b=$('info-box');b.textContent=txt;b.className='info-box'+(type==='fwd'?' fwd':type==='bwd'?' bwd':type==='err'?' err':'')}
+function info(t,tp){const b=$('info-box');b.textContent=t;b.className='info-box'+(tp==='fwd'?' fwd':tp==='bwd'?' bwd':tp==='err'?' err':'')}
 
-function showGradTable(){
-  const tb=$('grad-table').querySelector('tbody');tb.innerHTML='';
-  S.graph.varOrder.forEach(name=>{
-    const n=S.graph.vars[name];const tr=document.createElement('tr');
-    tr.innerHTML=`<td class="var-name">${name}</td><td class="val">${fmt(n.value)}</td><td class="grad" style="text-align:right">${fmt(n.grad)}</td>`;
-    tb.appendChild(tr);
-  });$('grad-card').style.display='block';
-}
+function showGT(){const tb=$('grad-table').querySelector('tbody');tb.innerHTML='';
+  S.g.vo.forEach(nm=>{const n=S.g.vs[nm];const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:700">${nm}</td><td class="v-val">${fm(n.val)}</td><td class="v-grad" style="text-align:right">${fm(n.grad)}</td>`;
+    tb.appendChild(tr)});$('grad-card').style.display='block'}
 
-function updateUI(){
-  const p=S.phase,has=!!S.graph;
-  $('btn-fwd-step').disabled=!has||(p!=='idle'&&p!=='forward');
-  $('btn-fwd-all').disabled=!has||(p!=='idle'&&p!=='forward');
-  $('btn-bwd-step').disabled=!has||(p!=='fwd_done'&&p!=='backward');
-  $('btn-bwd-all').disabled=!has||(p!=='fwd_done'&&p!=='backward');
-  $('btn-reset').disabled=!has;
-  $('btn-play').disabled=!has||p==='bwd_done';
-  // Progress
-  const pf=$('progress-fill');const total=S.topo.length;
+function toggleP(){if(pTimer){stopP();return}
+  const d=parseInt($('speed').value);$('btn-play').classList.add('playing');$('btn-play').innerHTML='&#9646;&#9646;';
+  pTimer=setInterval(()=>{if(S.ph==='idle'||S.ph==='forward')fwdStep();
+    else if(S.ph==='fwd_done'||S.ph==='backward')bwdStep();if(S.ph==='bwd_done')stopP()},d)}
+function stopP(){if(pTimer){clearInterval(pTimer);pTimer=null}$('btn-play').classList.remove('playing');$('btn-play').innerHTML='&#9654;'}
+
+function upUI(){const p=S.ph,h=!!S.g;
+  $('btn-fwd-step').disabled=!h||(p!=='idle'&&p!=='forward');$('btn-fwd-all').disabled=!h||(p!=='idle'&&p!=='forward');
+  $('btn-bwd-step').disabled=!h||(p!=='fwd_done'&&p!=='backward');$('btn-bwd-all').disabled=!h||(p!=='fwd_done'&&p!=='backward');
+  $('btn-reset').disabled=!h;$('btn-play').disabled=!h||p==='bwd_done';
+  const pf=$('pbar'),total=S.tp.length||1;
   if(p==='idle'){pf.style.width='0%';pf.className='progress-fill'}
-  else if(p==='forward'||p==='fwd_done'){pf.style.width=`${(S.fwdIdx/total)*50}%`;pf.className='progress-fill fwd'}
-  else if(p==='backward'||p==='bwd_done'){const bwdTotal=total;pf.style.width=`${50+(S.bwdIdx/bwdTotal)*50}%`;pf.className='progress-fill bwd'}
-}
+  else if(p==='forward'||p==='fwd_done'){pf.style.width=`${(S.fi/total)*50}%`;pf.className='progress-fill fwd'}
+  else{pf.style.width=`${50+(S.bi/total)*50}%`;pf.className='progress-fill bwd'}}
 
 // =====================================================================
-//  EVENT HANDLERS
+//  EVENTS
 // =====================================================================
-$('btn-build').addEventListener('click',()=>buildFromInput());
-$('btn-reset').addEventListener('click',resetState);
+$('btn-build').addEventListener('click',()=>buildFrom());
+$('btn-reset').addEventListener('click',resetS);
 $('btn-fwd-step').addEventListener('click',fwdStep);
 $('btn-fwd-all').addEventListener('click',fwdAll);
 $('btn-bwd-step').addEventListener('click',bwdStep);
 $('btn-bwd-all').addEventListener('click',bwdAll);
-$('btn-play').addEventListener('click',togglePlay);
-$('expr-input').addEventListener('keydown',e=>{if(e.key==='Enter')buildFromInput()});
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;
-  if(e.key==='f'||e.key==='F')fwdStep();
-  if(e.key==='b'||e.key==='B')bwdStep();
-  if(e.key==='r'||e.key==='R')resetState();
-  if(e.key===' '){e.preventDefault();togglePlay()}
-});
+$('btn-play').addEventListener('click',toggleP);
+$('expr-input').addEventListener('keydown',e=>{if(e.key==='Enter')buildFrom()});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.key==='f'||e.key==='F')fwdStep();if(e.key==='b'||e.key==='B')bwdStep();
+  if(e.key==='r'||e.key==='R')resetS();if(e.key===' '){e.preventDefault();toggleP()}});
 
 // =====================================================================
 //  INIT
 // =====================================================================
-initExamples();updateUI();
-loadExample(0);
+initEx();upUI();loadEx(0);
 </script>
 </body>
 </html>
