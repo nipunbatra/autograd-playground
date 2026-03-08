@@ -55,6 +55,7 @@
       </div>
       <div class="graph-note" id="graph-note" style="display:none">Wheel to zoom, drag to pan, double-click to fit.</div>
       <div class="graph-toolbar" id="graph-toolbar" style="display:none">
+        <button class="tool-btn" id="btn-follow" title="Keep the active node centered">Follow</button>
         <button class="tool-btn" id="btn-fit" title="Fit graph">Fit</button>
         <button class="tool-btn" id="btn-focus" title="Center active node">Focus</button>
         <button class="tool-btn" id="btn-zoom-out" title="Zoom out">&#8722;</button>
@@ -62,6 +63,7 @@
         <button class="tool-btn" id="btn-zoom-in" title="Zoom in">+</button>
       </div>
       <svg id="graph-svg" style="display:none"></svg>
+      <div class="minimap" id="minimap" style="display:none"><svg id="minimap-svg"></svg></div>
       <div class="legend-bar" id="legend" style="display:none">
         <span><span class="sw" style="background:#e0e7ff;border:1.5px solid #818cf8"></span>Input</span>
         <span><span class="sw" style="background:#fef3c7;border:1.5px solid #fbbf24"></span>Const</span>

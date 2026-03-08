@@ -185,8 +185,27 @@ function updateViewportHud(){
   const on=!!S.g;
   $('graph-toolbar').style.display=on?'flex':'none';
   $('graph-note').style.display=on?'block':'none';
+  $('minimap').style.display=on?'block':'none';
   $('zoom-pill').textContent=`${zoomPct()}%`;
-  $('btn-focus').disabled=!activeGraphNode()
+  $('btn-focus').disabled=!activeGraphNode();
+  $('btn-follow').classList.toggle('active',!!S.cam.follow)
+}
+function renderMinimap(){
+  const box=$('minimap'),svg=$('minimap-svg');
+  if(!S.g||!S.cam.base||!S.cam.current){box.style.display='none';svg.innerHTML='';return}
+  box.style.display='block';
+  const W=164,H=118,pad=12,b=graphBounds(S.g),scale=Math.min((W-pad*2)/Math.max(b.w,1),(H-pad*2)/Math.max(b.h,1));
+  const ox=(W-b.w*scale)/2-b.x*scale,oy=(H-b.h*scale)/2-b.y*scale,themeDark=document.body.dataset.theme==='dark';
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.innerHTML='';
+  const nodes=sv('g');
+  S.g.ns.forEach(n=>{
+    const gm=n.geom||nodeGeom(n),x=n.x*scale+ox,y=n.y*scale+oy;
+    if(gm.shape==='circle')nodes.appendChild(sv('circle',{cx:x,cy:y,r:Math.max(1.8,gm.r*scale),fill:themeDark?'#bfdbfe':'#94a3b8',opacity:.72}));
+    else nodes.appendChild(sv('rect',{x:(n.x-gm.w/2)*scale+ox,y:(n.y-gm.h/2)*scale+oy,width:Math.max(3,gm.w*scale),height:Math.max(3,gm.h*scale),rx:3,fill:themeDark?'#cbd5e1':'#94a3b8',opacity:.7}))
+  });
+  svg.appendChild(nodes);
+  svg.appendChild(sv('rect',{x:(S.cam.base.x-b.x)*scale+ox,y:(S.cam.base.y-b.y)*scale+oy,width:S.cam.base.w*scale,height:S.cam.base.h*scale,rx:10,fill:'none',stroke:themeDark?'rgba(148,163,184,.28)':'rgba(100,116,139,.22)','stroke-width':1.2}));
+  svg.appendChild(sv('rect',{x:(S.cam.current.x-b.x)*scale+ox,y:(S.cam.current.y-b.y)*scale+oy,width:S.cam.current.w*scale,height:S.cam.current.h*scale,rx:10,fill:themeDark?'rgba(96,165,250,.14)':'rgba(37,99,235,.12)',stroke:themeDark?'#93c5fd':'#2563eb','stroke-width':1.5}))
 }
 function requestRender(reason='',emit=false){if(!S.g)return;renderG($('graph-svg'),S.g,S.dm,S.bwdAnn);if(emit)emitStateChange(reason)}
 function fitGraph(emit=true){
@@ -203,6 +222,11 @@ function focusNode(node=activeGraphNode(),emit=true){
   if(!node||!S.cam.base)return;
   const zoom=clamp(S.cam.base.w/Math.max(260,(node.geom?.w||140)*3),1.35,2.4),w=S.cam.base.w/zoom,h=S.cam.base.h/zoom;
   S.cam.current={x:node.x-w/2,y:node.y-h/2,w,h};S.cam.manual=true;clampCamera();requestRender('focus-node',emit)
+}
+function maybeFollow(node){
+  if(!S.cam.follow||!node||!S.cam.base)return;
+  const zoom=clamp(S.cam.base.w/Math.max(220,(node.geom?.w||140)*2.6),1.6,2.8),w=S.cam.base.w/zoom,h=S.cam.base.h/zoom;
+  S.cam.current={x:node.x-w/2,y:node.y-h/2,w,h};S.cam.manual=true;clampCamera()
 }
 function clientToGraph(svg,x,y){
   const r=svg.getBoundingClientRect(),vb=S.cam.current||S.cam.base;
@@ -287,7 +311,7 @@ function renderG(svg,g,dims,bwdAnn){
     grp.addEventListener('mouseenter',e=>{const nid=parseInt(grp.dataset.nid);showTT(e,g.ns.find(n=>n.id===nid))});
     grp.addEventListener('mousemove',e=>{const tt=$('tooltip');tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'});
     grp.addEventListener('mouseleave',()=>{$('tooltip').style.display='none'})});
-  updateViewportHud()
+  updateViewportHud();renderMinimap()
 }
 
 function badge(cx,cy,text,bg,fg,fs=10,cls=''){
@@ -313,7 +337,7 @@ const EX = EXAMPLES;
 // =====================================================================
 //  APP
 // =====================================================================
-let S={g:null,tp:[],fi:0,bi:0,ph:'idle',dm:null,bwdAnn:null,cam:{base:null,current:null,manual:false,drag:false,last:null,moved:false}};
+let S={g:null,tp:[],fi:0,bi:0,ph:'idle',dm:null,bwdAnn:null,cam:{base:null,current:null,manual:false,drag:false,last:null,moved:false,follow:false}};
 let pTimer=null;
 const $=id=>document.getElementById(id);
 const subs=new Set();
@@ -514,7 +538,8 @@ function buildFrom(dv){
       const sp=document.createElement('span');sp.textContent=nm+' =';ch.appendChild(sp);
       const inp=document.createElement('input');inp.type='number';inp.step='any';inp.value=dv?.[nm]??1;
       inp.dataset.v=nm;inp.addEventListener('change',()=>resetS());ch.appendChild(inp);bar.appendChild(ch)});
-    S.g=g;S.tp=topo(g.out);S.dm=layoutG(g);S.cam={base:null,current:null,manual:false,drag:false,last:null,moved:false};resetS(true);
+    const follow=S.cam.follow;
+    S.g=g;S.tp=topo(g.out);S.dm=layoutG(g);S.cam={base:null,current:null,manual:false,drag:false,last:null,moved:false,follow};resetS(true);
     $('graph-empty').style.display='none';$('graph-svg').style.display='block';$('legend').style.display='flex';
     info('Graph built! Press F or click Fwd to start.','');
     upUI();emitStateChange('build');
@@ -539,11 +564,13 @@ function fwdStep(){
   else info(`Fwd ${S.fi+1}/${S.tp.length}: ${descOp(nd)}\n= ${fm(nd.val)}`,'fwd');
   $('chain-rule-area').innerHTML='';
   S.fi++;if(S.fi>=S.tp.length)S.ph='fwd_done';
+  maybeFollow(nd);
   upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('forward-step')}
 
 function fwdAll(){if(!S.g)return;stopP();S.g.ns.forEach(n=>n.fA=false);S.bwdAnn=null;
   while(S.fi<S.tp.length){const n=S.tp[S.fi];if(n.tp!=='i'&&n.tp!=='c')n.val=compV(n);n.fD=true;S.fi++}
   S.ph='fwd_done';info(`Forward complete. Output = ${fm(S.g.out.val)}\n\nPress B or Bwd to compute gradients.`,'fwd');
+  maybeFollow(S.g.out);
   $('chain-rule-area').innerHTML='';upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('forward-all')}
 
 function bwdStep(){
@@ -567,7 +594,6 @@ function bwdStep(){
     grads.forEach(gr=>gr.t.grad+=gr.g);
 
     // Info text
-    const posLabel=(n,i)=>{const p=nd.ins.length>1?['Left','Right'][i]:'';return`${p} "${n.label}" (=${fm(n.val)})`};
     let txt=`Bwd ${S.bi+1}/${rev.length}: ${nd.op} node\n`;
     txt+=`Accumulated grad = ${fm(upstream)}\n`;
     info(txt,'bwd');
@@ -584,6 +610,7 @@ function bwdStep(){
     $('chain-rule-area').innerHTML='';
   }
   S.bi++;if(S.bi>=rev.length){S.ph='bwd_done';showGT()}
+  maybeFollow(nd);
   upUI();renderG($('graph-svg'),S.g,S.dm,S.bwdAnn);emitStateChange('backward-step')}
 
 function bwdAll(){if(!S.g)return;stopP();
@@ -594,6 +621,7 @@ function bwdAll(){if(!S.g)return;stopP();
   while(S.bi<rev.length){const nd=rev[S.bi];nd.bD=true;
     if(nd.tp==='o')lgrads(nd).forEach(gr=>gr.t.grad+=gr.g);S.bi++}
   S.ph='bwd_done';info('Backward complete! All gradients computed.','bwd');
+  maybeFollow(S.g.out);
   $('chain-rule-area').innerHTML='';showGT();upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('backward-all')}
 
 function renderChainRule(nd,upstream,items){
@@ -663,6 +691,10 @@ $('btn-fwd-all').addEventListener('click',fwdAll);
 $('btn-bwd-step').addEventListener('click',bwdStep);
 $('btn-bwd-all').addEventListener('click',bwdAll);
 $('btn-play').addEventListener('click',toggleP);
+$('btn-follow').addEventListener('click',()=>{
+  S.cam.follow=!S.cam.follow;updateViewportHud();
+  if(S.cam.follow)focusNode(activeGraphNode());else emitStateChange('follow-off')
+});
 $('btn-zoom-in').addEventListener('click',()=>zoomGraph(1.18,null,true));
 $('btn-zoom-out').addEventListener('click',()=>zoomGraph(1/1.18,null,true));
 $('btn-fit').addEventListener('click',()=>fitGraph(true));
@@ -670,7 +702,10 @@ $('btn-focus').addEventListener('click',()=>focusNode());
 $('btn-export-json').addEventListener('click',()=>saveGraphJSON());
 $('btn-export-stages').addEventListener('click',()=>saveStagesJSON());
 $('btn-export-svg').addEventListener('click',()=>saveGraphSvg());
-$('theme-toggle').addEventListener('click',()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark'));
+$('theme-toggle').addEventListener('click',()=>{
+  applyTheme(document.body.dataset.theme==='dark'?'light':'dark');
+  if(S.g)requestRender()
+});
 $('expr-input').addEventListener('keydown',e=>{if(e.key==='Enter')buildFrom()});
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
   if(e.key==='f'||e.key==='F')fwdStep();if(e.key==='b'||e.key==='B')bwdStep();

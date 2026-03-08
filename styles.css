@@ -268,6 +268,7 @@ body[data-theme='dark'] .theme-thumb{transform:translateX(34px);background:#dbea
   right:14px;
   display:flex;
   align-items:center;
+  flex-wrap:wrap;
   gap:8px;
   padding:8px;
   border-radius:18px;
@@ -292,6 +293,11 @@ body[data-theme='dark'] .theme-thumb{transform:translateX(34px);background:#dbea
   border:1px solid rgba(151,170,194,.22)
 }
 .tool-btn:hover{transform:translateY(-1px);border-color:rgba(37,99,235,.28);color:var(--pri-d)}
+.tool-btn.active{
+  background:linear-gradient(180deg,var(--pri),var(--pri-d));
+  color:#fff;
+  border-color:rgba(37,99,235,.38)
+}
 .zoom-pill{
   min-width:60px;
   padding:0 10px;
@@ -319,6 +325,22 @@ body[data-theme='dark'] .theme-thumb{transform:translateX(34px);background:#dbea
   letter-spacing:.02em;
   z-index:2
 }
+.minimap{
+  position:absolute;
+  right:16px;
+  bottom:56px;
+  width:164px;
+  height:118px;
+  border-radius:18px;
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(151,170,194,.22);
+  backdrop-filter:blur(14px);
+  box-shadow:var(--shadow-soft);
+  z-index:2;
+  overflow:hidden;
+  pointer-events:none
+}
+#minimap-svg{width:100%;height:100%;display:block}
 
 /* Legend bar */
 .legend-bar{
@@ -497,6 +519,7 @@ body[data-theme='dark'] .zoom-pill{
   background:rgba(15,28,46,.88);
   border-color:rgba(148,163,184,.18)
 }
+body[data-theme='dark'] .zoom-pill{color:#bfdbfe}
 body[data-theme='dark'] .status-pill{color:#dce7f4}
 body[data-theme='dark'] .status-pill.forward,
 body[data-theme='dark'] .status-pill.fwd_done{background:rgba(6,95,70,.42);color:#bbf7d0}
@@ -521,6 +544,11 @@ body[data-theme='dark'] .btn-ghost{
 }
 body[data-theme='dark'] .tool-btn:hover,
 body[data-theme='dark'] .btn-ghost:hover:not(:disabled){background:rgba(16,29,48,.96)}
+body[data-theme='dark'] .tool-btn.active{
+  background:linear-gradient(180deg,#2563eb,#1d4ed8);
+  color:#fff;
+  border-color:rgba(96,165,250,.42)
+}
 body[data-theme='dark'] .ex-btn{
   background:linear-gradient(180deg, rgba(15,28,46,.92), rgba(10,21,35,.88));
   color:#dce7f4;
@@ -540,6 +568,11 @@ body[data-theme='dark'] footer,
 body[data-theme='dark'] .legend-bar,
 body[data-theme='dark'] .grad-table th,
 body[data-theme='dark'] .graph-empty{color:#9fb0c6}
+body[data-theme='dark'] .api-hint code{
+  background:rgba(15,28,46,.92);
+  color:#dbeafe;
+  border-color:rgba(148,163,184,.22)
+}
 body[data-theme='dark'] .var-chip{
   background:rgba(37,99,235,.18);
   border-color:rgba(96,165,250,.24);
@@ -556,5 +589,9 @@ body[data-theme='dark'] .graph-note{
   background:rgba(11,20,35,.86);
   color:#e7eef8;
   border:1px solid rgba(148,163,184,.16)
+}
+body[data-theme='dark'] .minimap{
+  background:rgba(11,20,35,.9);
+  border-color:rgba(148,163,184,.16)
 }
 body[data-theme='dark'] footer a{color:#93c5fd}
