@@ -6,980 +6,125 @@
 <title>Autograd Playground</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --pri:#2563eb;--pri-d:#1d4ed8;--pri-l:#dbeafe;
-  --em:#10b981;--em-d:#047857;--em-l:#d1fae5;
-  --ro:#fb7185;--ro-d:#be123c;--ro-l:#ffe4e6;
-  --am:#f59e0b;--am-d:#b45309;--am-l:#fef3c7;
-  --vi:#7c3aed;--vi-l:#ede9fe;
-  --s50:#f7fafd;--s100:#eef4fb;--s200:#d9e5f2;--s300:#b7c7db;--s400:#7b8ba1;
-  --s500:#5b6b81;--s700:#263548;--s800:#182435;--s900:#0d1726;
-  --bg0:#07111f;--bg1:#0f1d32;--bg2:#142947;
-  --glass:rgba(255,255,255,.78);--glass-strong:rgba(255,255,255,.92);
-  --shadow:0 18px 50px rgba(7,17,31,.16);
-  --shadow-soft:0 10px 30px rgba(15,23,42,.08);
-  --rad:18px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{
-  overflow:hidden;
-  font-family:'Space Grotesk',system-ui,sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(37,99,235,.22), transparent 32%),
-    radial-gradient(circle at right 20%, rgba(16,185,129,.16), transparent 28%),
-    linear-gradient(180deg, #f5f9fd 0%, #ebf1f8 100%);
-  color:var(--s800)
-}
-body::before{
-  content:'';
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(115deg, rgba(255,255,255,.28), transparent 42%),
-    radial-gradient(circle at 85% 78%, rgba(124,58,237,.08), transparent 20%);
-  pointer-events:none
-}
-.app{height:100%;display:flex;flex-direction:column;gap:14px;padding:18px;position:relative}
-
-/* Header */
-header{
-  position:relative;
-  background:linear-gradient(135deg,var(--bg0),var(--bg2));
-  color:#fff;
-  padding:16px 22px;
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  border-radius:24px;
-  overflow:hidden;
-  box-shadow:var(--shadow)
-}
-header::before{
-  content:'';
-  position:absolute;
-  inset:-20% auto auto 56%;
-  width:360px;
-  height:220px;
-  background:radial-gradient(circle, rgba(96,165,250,.28), transparent 68%);
-  pointer-events:none
-}
-header h1{
-  position:relative;
-  font-size:24px;
-  font-weight:700;
-  letter-spacing:-.04em;
-  white-space:nowrap
-}
-header h1 span{opacity:.62;font-weight:500;font-size:15px}
-.kbd-hints{position:relative;display:flex;gap:10px;font-size:12px;opacity:.82;flex-wrap:wrap}
-.kbd{
-  background:rgba(255,255,255,.14);
-  padding:3px 7px;
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:8px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px
-}
-
-/* Top controls */
-.top-bar{
-  flex-shrink:0;
-  background:var(--glass);
-  border:1px solid rgba(255,255,255,.6);
-  border-radius:24px;
-  padding:14px 16px 16px;
-  box-shadow:var(--shadow-soft)
-}
-.examples-row{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:thin}
-.examples-row::-webkit-scrollbar{height:4px}
-.examples-row::-webkit-scrollbar-thumb{background:var(--s300);border-radius:2px}
-.ex-btn{
-  flex:0 0 auto;
-  padding:11px 18px;
-  background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(230,238,248,.85));
-  border:1px solid rgba(141,158,179,.28);
-  border-radius:999px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
-  cursor:pointer;
-  font-size:13px;
-  font-weight:700;
-  color:var(--s700);
-  transition:all .15s ease;
-  white-space:nowrap;
-  font-family:inherit
-}
-.ex-btn:hover{border-color:rgba(37,99,235,.34);color:var(--pri-d);transform:translateY(-1px)}
-.ex-btn.active{
-  background:linear-gradient(180deg, rgba(223,238,255,.98), rgba(199,223,255,.9));
-  border-color:rgba(37,99,235,.42);
-  color:var(--pri-d)
-}
-.ex-btn .ex-desc{font-size:10px;font-weight:500;color:var(--s400);margin-left:6px}
-.input-row{display:flex;gap:10px;align-items:center;margin-top:4px;flex-wrap:wrap}
-#expr-input{
-  flex:1;
-  min-width:200px;
-  padding:12px 16px;
-  border:1px solid rgba(151,170,194,.42);
-  border-radius:16px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:13px;
-  background:rgba(255,255,255,.86);
-  color:var(--s800)
-}
-#expr-input:focus{border-color:rgba(37,99,235,.55);outline:none;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
-.var-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.var-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(219,234,254,.95);
-  padding:5px 6px 5px 12px;
-  border:1px solid rgba(37,99,235,.16);
-  border-radius:999px;
-  font-size:12px;
-  font-weight:700;
-  color:var(--pri-d)
-}
-.var-chip input{
-  width:58px;
-  padding:5px 6px;
-  border:1px solid rgba(151,170,194,.48);
-  border-radius:10px;
-  font-size:12px;
-  text-align:center;
-  font-family:'IBM Plex Mono',monospace;
-  background:#fff
-}
-.var-chip input:focus{border-color:var(--pri);outline:none}
-.btn{
-  padding:9px 14px;
-  border:none;
-  border-radius:12px;
-  font-size:12px;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .12s ease;
-  font-family:inherit;
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  white-space:nowrap;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25)
-}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
-.btn-pri{background:linear-gradient(180deg,var(--pri),var(--pri-d));color:#fff}.btn-pri:hover:not(:disabled){filter:brightness(1.04)}
-.btn-fwd{background:linear-gradient(180deg,#18c08b,var(--em));color:#fff}.btn-fwd:hover:not(:disabled){background:var(--em-d)}
-.btn-bwd{background:linear-gradient(180deg,#fb8aa1,var(--ro));color:#fff}.btn-bwd:hover:not(:disabled){background:var(--ro-d)}
-.btn-ghost{background:linear-gradient(180deg,#fff,var(--s100));color:var(--s700);border:1px solid rgba(151,170,194,.3)}
-.btn-ghost:hover:not(:disabled){background:var(--s200)}
-.btn-play{background:linear-gradient(180deg,var(--pri),var(--pri-d));color:#fff;min-width:40px;justify-content:center;padding:9px 10px}
-.btn-play.playing{background:linear-gradient(180deg,var(--am),var(--am-d))}
-
-/* Main area */
-.main-area{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;min-height:0;overflow:hidden}
-@media(max-width:960px){
-  html,body{height:auto;overflow:auto}
-  .app{height:auto;min-height:100vh}
-  .main-area{grid-template-columns:1fr;grid-template-rows:minmax(56vh,1fr) auto}
-  .graph-wrap{min-height:56vh}
-  .sidebar{overflow:visible}
-}
-
-/* Graph */
-.graph-wrap{
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(241,247,253,.96));
-  border:1px solid rgba(255,255,255,.56);
-  border-radius:26px;
-  box-shadow:var(--shadow)
-}
-.graph-wrap::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(37,99,235,.08), transparent 24%),
-    radial-gradient(circle at 82% 24%, rgba(16,185,129,.09), transparent 18%);
-  pointer-events:none
-}
-#graph-svg{width:100%;height:100%;display:block;position:relative;z-index:1}
-.graph-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--s400);
-  font-size:14px;flex-direction:column;gap:8px;z-index:1}
-.graph-empty .icon{font-size:36px;opacity:.3}
-
-/* Legend bar */
-.legend-bar{
-  position:absolute;
-  bottom:14px;
-  left:14px;
-  display:flex;
-  gap:10px;
-  font-size:10px;
-  color:var(--s500);
-  background:rgba(255,255,255,.84);
-  padding:7px 12px;
-  border-radius:999px;
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(151,170,194,.24);
-  z-index:2
-}
-.legend-bar span{display:flex;align-items:center;gap:3px}
-.legend-bar .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
-
-/* Sidebar */
-.sidebar{display:flex;flex-direction:column;gap:14px;overflow-y:auto;background:transparent;border-left:0}
-.card{
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:22px;
-  background:var(--glass);
-  box-shadow:var(--shadow-soft);
-  overflow:hidden
-}
-.card-hd{
-  padding:10px 16px;
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:var(--s400);
-  background:linear-gradient(180deg, rgba(248,251,255,.92), rgba(235,242,250,.7));
-  border-bottom:1px solid rgba(151,170,194,.18)
-}
-.card-bd{padding:14px 16px}
-
-/* Controls */
-.status-strip{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.status-pill{
-  display:inline-flex;
-  align-items:center;
-  width:max-content;
-  max-width:100%;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  background:rgba(255,255,255,.78);
-  color:var(--s700);
-  border:1px solid rgba(151,170,194,.24)
-}
-.status-pill.forward,.status-pill.fwd_done{background:var(--em-l);color:var(--em-d);border-color:rgba(16,185,129,.22)}
-.status-pill.backward,.status-pill.bwd_done{background:var(--ro-l);color:var(--ro-d);border-color:rgba(244,63,94,.2)}
-.status-note{font-size:12px;line-height:1.5;color:var(--s500)}
-.ctrl-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.speed-row{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--s400)}
-.speed-row input[type=range]{flex:1;accent-color:var(--pri);height:4px}
-.progress{height:6px;background:rgba(151,170,194,.18);border-radius:999px;margin-top:10px;overflow:hidden}
-.progress-fill{height:100%;border-radius:999px;transition:width .3s}
-.progress-fill.fwd{background:var(--em)}.progress-fill.bwd{background:var(--ro)}
-.api-hint{margin-top:12px;font-size:11px;line-height:1.45;color:var(--s500)}
-.api-hint code{
-  font-family:'IBM Plex Mono',monospace;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(151,170,194,.2);
-  border-radius:8px;
-  padding:2px 6px
-}
-
-/* Info panel */
-.info-box{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  line-height:1.7;
-  white-space:pre-wrap;
-  padding:14px;
-  background:linear-gradient(180deg, rgba(250,252,255,.96), rgba(240,246,252,.92));
-  border:1px solid rgba(151,170,194,.22);
-  border-radius:16px;
-  min-height:68px;
-  max-height:280px;
-  overflow-y:auto;
-  color:var(--s700)
-}
-.info-box.fwd{border-left:4px solid var(--em)}.info-box.bwd{border-left:4px solid var(--ro)}
-.info-box.err{border-left:3px solid var(--am);background:var(--am-l)}
-
-/* Chain rule visual in info */
-.chain-rule{
-  margin-top:10px;
-  padding:12px 12px 10px;
-  background:rgba(255,255,255,.88);
-  border-radius:16px;
-  border:1px solid rgba(151,170,194,.22);
-  font-size:11px;
-  line-height:1.7
-}
-.cr-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0}
-.cr-pill{
-  display:inline-block;
-  padding:3px 8px;
-  border-radius:999px;
-  font-weight:700;
-  font-size:10px;
-  font-family:'IBM Plex Mono',monospace
-}
-.cr-upstream{background:var(--ro-l);color:var(--ro-d)}
-.cr-local{background:var(--am-l);color:#92400e}
-.cr-downstream{background:var(--vi-l);color:var(--vi)}
-.cr-arrow{color:var(--s400);font-weight:700}
-
-/* Grad table */
-.grad-table{width:100%;border-collapse:collapse;font-size:12px}
-.grad-table th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--s400);border-bottom:1px solid rgba(151,170,194,.18)}
-.grad-table td{padding:11px 14px;border-bottom:1px solid rgba(151,170,194,.12)}
-.grad-table tr:hover td{background:rgba(248,251,255,.84)}
-.v-val{color:var(--em-d);font-weight:600;font-family:'IBM Plex Mono',monospace}
-.v-grad{color:var(--ro-d);font-weight:600;font-family:'IBM Plex Mono',monospace}
-
-/* Tooltip */
-#tooltip{position:fixed;display:none;background:rgba(13,23,38,.96);color:#fff;padding:8px 10px;border-radius:12px;
-  font-size:11px;line-height:1.5;pointer-events:none;z-index:999;max-width:220px;
-  box-shadow:0 18px 40px rgba(0,0,0,.28);font-family:'IBM Plex Mono',monospace;border:1px solid rgba(255,255,255,.12)}
-
-/* SVG */
-svg text{font-family:'Space Grotesk',system-ui,sans-serif}
-@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.fade-up{animation:fadeUp .25s ease forwards}
-@keyframes pulseGlow{0%,100%{opacity:.7}50%{opacity:1}}
-.pulse-glow{animation:pulseGlow 1.2s ease-in-out infinite}
-
-footer{
-  text-align:center;
-  padding:10px 14px;
-  font-size:10px;
-  color:var(--s400);
-  flex-shrink:0;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(255,255,255,.58);
-  border-radius:18px
-}
-footer a{color:var(--pri);text-decoration:none}
-</style>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <div class="app">
-
-<header>
-  <h1>Autograd Playground <span>// interactive backprop</span></h1>
-  <div class="kbd-hints">
-    <span><span class="kbd">F</span> fwd</span>
-    <span><span class="kbd">B</span> bwd</span>
-    <span><span class="kbd">Space</span> play</span>
-    <span><span class="kbd">R</span> reset</span>
-  </div>
-</header>
-
-<div class="top-bar">
-  <div class="examples-row" id="examples-row"></div>
-  <div class="input-row">
-    <input type="text" id="expr-input" placeholder="e.g.  sigmoid(w * x + b)" spellcheck="false" autocomplete="off">
-    <button class="btn btn-pri" id="btn-build">Build</button>
-    <div class="var-bar" id="var-bar"></div>
-  </div>
-</div>
-
-<div class="main-area">
-  <div class="graph-wrap" id="graph-wrap">
-    <div class="graph-empty" id="graph-empty">
-      <div class="icon">&#x2B21;</div>
-      <div>Select an example to get started</div>
+  <header>
+    <h1>Autograd Playground <span>// interactive backprop</span></h1>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle dark and light mode">
+        <span class="theme-thumb" aria-hidden="true"></span>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"></path>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.2 14.8A8.8 8.8 0 0 1 9.2 3.8 8.8 8.8 0 1 0 20.2 14.8Z"></path>
+        </svg>
+      </button>
+      <div class="kbd-hints">
+        <span><span class="kbd">F</span> fwd</span>
+        <span><span class="kbd">B</span> bwd</span>
+        <span><span class="kbd">Space</span> play</span>
+        <span><span class="kbd">R</span> reset</span>
+      </div>
     </div>
-    <svg id="graph-svg" style="display:none"></svg>
-    <div class="legend-bar" id="legend" style="display:none">
-      <span><span class="sw" style="background:#e0e7ff;border:1.5px solid #818cf8"></span>Input</span>
-      <span><span class="sw" style="background:#fef3c7;border:1.5px solid #fbbf24"></span>Const</span>
-      <span><span class="sw" style="background:#f1f5f9;border:1.5px solid #94a3b8"></span>Op</span>
-      <span><span class="sw" style="background:#d1fae5;border:1.5px solid #34d399"></span>Fwd</span>
-      <span><span class="sw" style="background:#ffe4e6;border:1.5px solid #fb7185"></span>Bwd</span>
+  </header>
+
+  <div class="top-bar">
+    <div class="library-row">
+      <div class="examples-row" id="examples-row"></div>
+      <label class="example-jump">
+        <span>Example Library</span>
+        <select id="example-select"></select>
+      </label>
+    </div>
+    <div class="input-row">
+      <input type="text" id="expr-input" placeholder="e.g. sigmoid(w * x + b)" spellcheck="false" autocomplete="off">
+      <button class="btn btn-pri" id="btn-build">Build</button>
+      <div class="var-bar" id="var-bar"></div>
     </div>
   </div>
 
-  <div class="sidebar">
-    <div class="card">
-      <div class="card-hd">Controls</div>
-      <div class="card-bd">
-        <div class="status-strip">
-          <div class="status-pill" id="phase-pill">Idle</div>
-          <div class="status-note" id="status-note">Build a graph to begin.</div>
+  <div class="main-area">
+    <div class="graph-wrap" id="graph-wrap">
+      <div class="graph-empty" id="graph-empty">
+        <div class="icon">&#x2B21;</div>
+        <div>Select an example to get started</div>
+      </div>
+      <div class="graph-note" id="graph-note" style="display:none">Wheel to zoom, drag to pan, double-click to fit.</div>
+      <div class="graph-toolbar" id="graph-toolbar" style="display:none">
+        <button class="tool-btn" id="btn-fit" title="Fit graph">Fit</button>
+        <button class="tool-btn" id="btn-focus" title="Center active node">Focus</button>
+        <button class="tool-btn" id="btn-zoom-out" title="Zoom out">&#8722;</button>
+        <div class="zoom-pill" id="zoom-pill">100%</div>
+        <button class="tool-btn" id="btn-zoom-in" title="Zoom in">+</button>
+      </div>
+      <svg id="graph-svg" style="display:none"></svg>
+      <div class="legend-bar" id="legend" style="display:none">
+        <span><span class="sw" style="background:#e0e7ff;border:1.5px solid #818cf8"></span>Input</span>
+        <span><span class="sw" style="background:#fef3c7;border:1.5px solid #fbbf24"></span>Const</span>
+        <span><span class="sw" style="background:#f1f5f9;border:1.5px solid #94a3b8"></span>Op</span>
+        <span><span class="sw" style="background:#d1fae5;border:1.5px solid #34d399"></span>Fwd</span>
+        <span><span class="sw" style="background:#ffe4e6;border:1.5px solid #fb7185"></span>Bwd</span>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="card">
+        <div class="card-hd">Controls</div>
+        <div class="card-bd">
+          <div class="status-strip">
+            <div class="status-pill" id="phase-pill">Idle</div>
+            <div class="status-note" id="status-note">Build a graph to begin.</div>
+          </div>
+          <div class="ctrl-row">
+            <button class="btn btn-ghost" id="btn-reset" disabled>Reset</button>
+            <button class="btn btn-play" id="btn-play" disabled>&#9654;</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-fwd" id="btn-fwd-step" disabled>Fwd</button>
+            <button class="btn btn-fwd" id="btn-fwd-all" disabled>&raquo;</button>
+            <button class="btn btn-bwd" id="btn-bwd-step" disabled>Bwd</button>
+            <button class="btn btn-bwd" id="btn-bwd-all" disabled>&raquo;</button>
+          </div>
+          <div class="speed-row"><span>Fast</span><input type="range" id="speed" min="100" max="1500" value="500" step="100"><span>Slow</span></div>
+          <div class="progress"><div class="progress-fill" id="pbar"></div></div>
+          <div class="export-row">
+            <button class="btn btn-ghost" id="btn-export-json" disabled>Current JSON</button>
+            <button class="btn btn-ghost" id="btn-export-stages" disabled>All Stages</button>
+            <button class="btn btn-ghost" id="btn-export-svg" disabled>SVG</button>
+          </div>
+          <div class="api-hint">API: <code>window.AutogradPlayground.snapshot()</code> / <code>saveJSON()</code> / <code>saveSVG()</code></div>
         </div>
-        <div class="ctrl-row">
-          <button class="btn btn-ghost" id="btn-reset" disabled>Reset</button>
-          <button class="btn btn-play" id="btn-play" disabled>&#9654;</button>
-          <div style="flex:1"></div>
-          <button class="btn btn-fwd" id="btn-fwd-step" disabled>Fwd</button>
-          <button class="btn btn-fwd" id="btn-fwd-all" disabled>&raquo;</button>
-          <button class="btn btn-bwd" id="btn-bwd-step" disabled>Bwd</button>
-          <button class="btn btn-bwd" id="btn-bwd-all" disabled>&raquo;</button>
+      </div>
+
+      <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div class="card-hd">Step Details</div>
+        <div class="card-bd" style="flex:1;overflow-y:auto;padding:0">
+          <div class="info-box" id="info-box">Pick an example above to start.</div>
+          <div id="chain-rule-area"></div>
         </div>
-        <div class="speed-row"><span>Fast</span><input type="range" id="speed" min="100" max="1500" value="500" step="100"><span>Slow</span></div>
-        <div class="progress"><div class="progress-fill" id="pbar"></div></div>
-        <div class="api-hint">API: <code>window.AutogradPlayground.snapshot()</code> / <code>saveJSON()</code> / <code>saveSVG()</code></div>
       </div>
-    </div>
-    <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
-      <div class="card-hd">Step Details</div>
-      <div class="card-bd" style="flex:1;overflow-y:auto;padding:0">
-        <div class="info-box" id="info-box">Pick an example above to start.</div>
-        <div id="chain-rule-area"></div>
-      </div>
-    </div>
-    <div class="card" id="grad-card" style="display:none">
-      <div class="card-hd">Gradients</div>
-      <div class="card-bd" style="padding:0">
-        <table class="grad-table" id="grad-table"><thead><tr><th>Variable</th><th>Value</th><th style="text-align:right">&nabla;</th></tr></thead><tbody></tbody></table>
+
+      <div class="card" id="grad-card" style="display:none">
+        <div class="card-hd">Gradients</div>
+        <div class="card-bd" style="padding:0">
+          <table class="grad-table" id="grad-table">
+            <thead>
+              <tr><th>Variable</th><th>Value</th><th style="text-align:right">&nabla;</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<footer>Built for <a href="https://nipunbatra.github.io/principles-ai-teaching/" target="_blank">Principles of AI</a> &middot; IIT Gandhinagar</footer>
+  <footer>Built for <a href="https://nipunbatra.github.io/principles-ai-teaching/" target="_blank">Principles of AI</a> &middot; IIT Gandhinagar</footer>
 </div>
 
 <div id="tooltip"></div>
-
-<script>
-// =====================================================================
-//  TOKENIZER
-// =====================================================================
-const TT={NUM:'NUM',ID:'ID',PLUS:'+',MINUS:'-',STAR:'*',SLASH:'/',LP:'(',RP:')',COMMA:',',EOF:'EOF'};
-function tokenize(e){const t=[];let i=0;while(i<e.length){if(/\s/.test(e[i])){i++;continue}
-if(/\d/.test(e[i])||(e[i]==='.'&&i+1<e.length&&/\d/.test(e[i+1]))){let n='';while(i<e.length&&(/\d/.test(e[i])||e[i]==='.'))n+=e[i++];t.push({type:TT.NUM,value:n});continue}
-if(/[a-zA-Z_]/.test(e[i])){let n='';while(i<e.length&&/[a-zA-Z0-9_]/.test(e[i]))n+=e[i++];t.push({type:TT.ID,value:n});continue}
-const c=e[i];if('+-*/(),'.includes(c)){t.push({type:c==='+'?TT.PLUS:c==='-'?TT.MINUS:c==='*'?TT.STAR:c==='/'?TT.SLASH:c==='('?TT.LP:c===')'?TT.RP:TT.COMMA,value:c});i++;continue}
-throw new Error(`Bad char '${c}' at ${i}`);}t.push({type:TT.EOF,value:''});return t;}
-
-// =====================================================================
-//  PARSER
-// =====================================================================
-function parse(t){let p=0;const pk=()=>t[p],ad=()=>t[p++],ex=c=>{const k=ad();if(k.type!==c)throw new Error(`Expected '${c}' got '${k.type}'`);return k};
-function expr(){let l=term();while(pk().type===TT.PLUS||pk().type===TT.MINUS){const o=ad().type;l={type:'bin',op:o===TT.PLUS?'add':'sub',l,r:term()}}return l}
-function term(){let l=un();while(pk().type===TT.STAR||pk().type===TT.SLASH){const o=ad().type;l={type:'bin',op:o===TT.STAR?'mul':'div',l,r:un()}}return l}
-function un(){if(pk().type===TT.MINUS){ad();return{type:'un',op:'neg',a:un()}}return call()}
-function call(){if(pk().type===TT.ID&&p+1<t.length&&t[p+1].type===TT.LP){const n=ad().value;ad();const a=[];
-if(pk().type!==TT.RP){a.push(expr());while(pk().type===TT.COMMA){ad();a.push(expr())}}ex(TT.RP);return{type:'fn',name:n,a}}return pri()}
-function pri(){const k=pk();if(k.type===TT.NUM){ad();return{type:'num',v:parseFloat(k.value)}}
-if(k.type===TT.ID){ad();return{type:'var',name:k.value}}if(k.type===TT.LP){ad();const e=expr();ex(TT.RP);return e}
-throw new Error(`Unexpected '${k.value||k.type}'`);}
-const r=expr();if(pk().type!==TT.EOF)throw new Error(`Extra tokens: '${pk().value}'`);return r;}
-
-// =====================================================================
-//  GRAPH
-// =====================================================================
-class GN{constructor(id,tp,op,label,ins=[]){this.id=id;this.tp=tp;this.op=op;this.label=label;this.ins=ins;
-this.val=null;this.grad=0;this.rank=-1;this.x=0;this.y=0;this.fD=false;this.bD=false;this.fA=false;this.bA=false}}
-const OPS={add:'+',sub:'\u2212',mul:'\u00D7',div:'\u00F7'};
-const FNS=new Set(['exp','log','sigmoid','relu','tanh','sin','cos','sqrt','abs','neg']);
-function buildG(ast){const ns=[],vs={},vo=[];let id=0;
-function mk(tp,op,lb,ins=[]){const n=new GN(id++,tp,op,lb,ins);ns.push(n);return n}
-function w(a){
-if(a.type==='num'){const n=mk('c',null,fc(a.v));n.val=a.v;return n}
-if(a.type==='var'){if(!vs[a.name]){vs[a.name]=mk('i',null,a.name);vo.push(a.name)}return vs[a.name]}
-if(a.type==='bin'){return mk('o',a.op,OPS[a.op]||a.op,[w(a.l),w(a.r)])}
-if(a.type==='un'){return mk('o','neg','\u2212()',[w(a.a)])}
-if(a.type==='fn'){if(!FNS.has(a.name))throw new Error(`Unknown function: ${a.name}`);return mk('o',a.name,a.name,a.a.map(w))}}
-return{ns,vs,vo,out:w(ast)}}
-function fc(v){if(Number.isInteger(v)&&Math.abs(v)<1e4)return String(v);return parseFloat(v.toPrecision(5)).toString()}
-function fm(v){if(v==null)return'?';if(!isFinite(v))return String(v);if(v===0)return'0';if(Math.abs(v)<1e-6)return v.toExponential(2);return parseFloat(v.toPrecision(5)).toString()}
-
-// =====================================================================
-//  FORWARD & BACKWARD
-// =====================================================================
-function compV(n){const a=n.ins[0]?.val,b=n.ins[1]?.val;switch(n.op){
-case'add':return a+b;case'sub':return a-b;case'mul':return a*b;case'div':return a/b;case'neg':return-a;
-case'exp':return Math.exp(a);case'log':return Math.log(a);case'sigmoid':return 1/(1+Math.exp(-a));
-case'relu':return Math.max(0,a);case'tanh':return Math.tanh(a);case'sin':return Math.sin(a);
-case'cos':return Math.cos(a);case'sqrt':return Math.sqrt(a);case'abs':return Math.abs(a)}}
-
-function lgrads(n){const u=n.grad,a=n.ins[0]?.val,b=n.ins[1]?.val;switch(n.op){
-case'add':return[{t:n.ins[0],g:u,l:1},{t:n.ins[1],g:u,l:1}];
-case'sub':return[{t:n.ins[0],g:u,l:1},{t:n.ins[1],g:-u,l:-1}];
-case'mul':return[{t:n.ins[0],g:u*b,l:b},{t:n.ins[1],g:u*a,l:a}];
-case'div':return[{t:n.ins[0],g:u/b,l:1/b},{t:n.ins[1],g:-u*a/(b*b),l:-a/(b*b)}];
-case'neg':return[{t:n.ins[0],g:-u,l:-1}];
-case'exp':return[{t:n.ins[0],g:u*n.val,l:n.val}];
-case'log':return[{t:n.ins[0],g:u/a,l:1/a}];
-case'sigmoid':return[{t:n.ins[0],g:u*n.val*(1-n.val),l:n.val*(1-n.val)}];
-case'relu':return[{t:n.ins[0],g:u*(a>0?1:0),l:a>0?1:0}];
-case'tanh':return[{t:n.ins[0],g:u*(1-n.val*n.val),l:1-n.val*n.val}];
-case'sin':return[{t:n.ins[0],g:u*Math.cos(a),l:Math.cos(a)}];
-case'cos':return[{t:n.ins[0],g:u*(-Math.sin(a)),l:-Math.sin(a)}];
-case'sqrt':return[{t:n.ins[0],g:u/(2*n.val),l:1/(2*n.val)}];
-case'abs':return[{t:n.ins[0],g:u*(a>=0?1:-1),l:a>=0?1:-1}];default:return[]}}
-
-function gfDesc(n){switch(n.op){
-case'add':return['d(a+b)/da = 1','d(a+b)/db = 1'];
-case'sub':return['d(a-b)/da = 1','d(a-b)/db = -1'];
-case'mul':return[`d(a\u00D7b)/da = b = ${fm(n.ins[1]?.val)}`,`d(a\u00D7b)/db = a = ${fm(n.ins[0]?.val)}`];
-case'div':return[`d(a/b)/da = 1/b`,`d(a/b)/db = -a/b\u00B2`];
-case'neg':return['d(-a)/da = -1'];case'exp':return[`d(e^a)/da = e^a = ${fm(n.val)}`];
-case'log':return[`d(ln a)/da = 1/a = ${fm(1/n.ins[0]?.val)}`];
-case'sigmoid':return[`\u03C3\'= \u03C3(1-\u03C3) = ${fm(n.val*(1-n.val))}`];
-case'relu':return[`relu\' = ${n.ins[0]?.val>0?'1':'0'}`];
-case'tanh':return[`tanh\' = 1-tanh\u00B2 = ${fm(1-n.val*n.val)}`];default:return['?']}}
-
-function topo(out){const v=new Set(),o=[];function go(n){if(v.has(n.id))return;v.add(n.id);n.ins.forEach(go);o.push(n)}go(out);return o}
-
-// =====================================================================
-//  LAYOUT
-// =====================================================================
-function avg(a){return a.length?a.reduce((s,v)=>s+v,0)/a.length:0}
-function nodeGeom(n){
-  if(n.tp==='o')return{shape:'circle',r:34,w:68,h:68};
-  return{shape:'rect',w:Math.max(108,n.label.length*11+38),h:56,rx:16}
-}
-function layoutG(g){
-  const{ns}=g,mem={};
-  function rk(n){if(mem[n.id]!=null)return mem[n.id];if(!n.ins.length)return mem[n.id]=0;return mem[n.id]=Math.max(...n.ins.map(rk))+1}
-  ns.forEach(n=>{n.rank=rk(n);n.geom=nodeGeom(n)});
-  const mxR=Math.max(...ns.map(n=>n.rank));
-  const ranks=Array.from({length:mxR+1},()=>[]);
-  ns.forEach(n=>ranks[n.rank].push(n));
-
-  const M=104,GX=126,GY=76;
-  const rankH=r=>r.reduce((s,n)=>s+n.geom.h,0)+Math.max(0,r.length-1)*GY;
-  const rankW=r=>Math.max(136,...r.map(n=>n.geom.w));
-  const totalH=Math.max(260,...ranks.map(rankH));
-  const widths=ranks.map(rankW);
-  const xs=[];let xCur=M;
-  widths.forEach((w,i)=>{xs[i]=xCur+w/2;xCur+=w+(i<widths.length-1?GX:0)});
-
-  function placeRank(rank,idx){
-    let y=M+(totalH-rankH(rank))/2;
-    rank.forEach(n=>{y+=n.geom.h/2;n.x=xs[idx];n.y=y;y+=n.geom.h/2+GY})
-  }
-
-  ranks.forEach((rank,idx)=>placeRank(rank,idx));
-  for(let pass=0;pass<2;pass++){
-    for(let r=1;r<=mxR;r++){
-      ranks[r].sort((a,b)=>avg(a.ins.map(n=>n.y))-avg(b.ins.map(n=>n.y)));
-      placeRank(ranks[r],r)
-    }
-    const con={};
-    ns.forEach(n=>{if(n.rank>0)n.ins.forEach(inp=>{if(inp.rank===0)(con[inp.id]=con[inp.id]||[]).push(n)})});
-    ranks[0].sort((a,b)=>avg((con[a.id]||[]).map(n=>n.y))-avg((con[b.id]||[]).map(n=>n.y)));
-    placeRank(ranks[0],0)
-  }
-  const totalW=M*2+widths.reduce((s,w)=>s+w,0)+GX*mxR;
-  return{w:totalW,h:totalH+M*2}
-}
-
-// =====================================================================
-//  SVG RENDERER
-// =====================================================================
-const NS='http://www.w3.org/2000/svg';
-function sv(tag,a={},txt){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);if(txt!=null)e.textContent=txt;return e}
-
-function ePt(nd,tx,ty){const dx=tx-nd.x,dy=ty-nd.y,d=Math.hypot(dx,dy);if(d===0)return{x:nd.x,y:nd.y};
-const gm=nd.geom||nodeGeom(nd);
-if(gm.shape==='circle')return{x:nd.x+dx/d*gm.r,y:nd.y+dy/d*gm.r}
-const hw=gm.w/2,hh=gm.h/2,sx=dx?hw/Math.abs(dx):1e9,sy=dy?hh/Math.abs(dy):1e9,s=Math.min(sx,sy);
-return{x:nd.x+dx*s,y:nd.y+dy*s}}
-function qPath(c){return`M ${c.from.x} ${c.from.y} Q ${c.ctrl.x} ${c.ctrl.y} ${c.to.x} ${c.to.y}`}
-function qPoint(c,t){const u=1-t;return{x:u*u*c.from.x+2*u*t*c.ctrl.x+t*t*c.to.x,y:u*u*c.from.y+2*u*t*c.ctrl.y+t*t*c.to.y}}
-function qTan(c,t){return{x:2*(1-t)*(c.ctrl.x-c.from.x)+2*t*(c.to.x-c.ctrl.x),y:2*(1-t)*(c.ctrl.y-c.from.y)+2*t*(c.to.y-c.ctrl.y)}}
-function qOffset(c,t,d){const p=qPoint(c,t),tg=qTan(c,t),len=Math.hypot(tg.x,tg.y)||1;return{x:p.x+(-tg.y/len)*d,y:p.y+(tg.x/len)*d}}
-function graphBounds(g){
-  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  g.ns.forEach(n=>{
-    const gm=n.geom||nodeGeom(n),extra=(n.fD||n.bD)?34:18;
-    minX=Math.min(minX,n.x-gm.w/2-extra);maxX=Math.max(maxX,n.x+gm.w/2+extra);
-    minY=Math.min(minY,n.y-gm.h/2-extra);maxY=Math.max(maxY,n.y+gm.h/2+extra)
-  });
-  return{x:minX,y:minY,w:maxX-minX,h:maxY-minY}
-}
-function backCurve(src,dst,idx,count){
-  const from=ePt(src,dst.x,dst.y),to=ePt(dst,src.x,src.y),dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy)||1;
-  const nx=-dy/len,ny=dx/len,spread=count===1?0:idx-(count-1)/2;
-  const sign=spread===0?(dy>=0?1:-1):Math.sign(spread);
-  const lift=(Math.max(26,Math.min(72,len*0.18))+Math.abs(spread)*16)*sign;
-  return{from,to,ctrl:{x:(from.x+to.x)/2+nx*lift,y:(from.y+to.y)/2+ny*lift},spread,sign}
-}
-
-function renderG(svg,g,dims,bwdAnn){
-  svg.innerHTML='';
-  const b=graphBounds(g),pad=bwdAnn?120:86;
-  svg.setAttribute('viewBox',`${b.x-pad} ${b.y-pad} ${b.w+pad*2} ${b.h+pad*2}`);
-  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
-
-  const defs=sv('defs');
-  [['ah','#94a3b8'],['ahg','#10b981'],['ahr','#f43f5e'],['ahv','#7c3aed']].forEach(([id,c])=>{
-    const m=sv('marker',{id,markerWidth:10,markerHeight:7,refX:9,refY:3.5,orient:'auto',markerUnits:'strokeWidth'});
-    m.appendChild(sv('polygon',{points:'0 0.5,10 3.5,0 6.5',fill:c}));defs.appendChild(m)});
-  const ft=sv('filter',{id:'gl',x:'-50%',y:'-50%',width:'200%',height:'200%'});
-  ft.appendChild(sv('feGaussianBlur',{stdDeviation:'4',result:'b'}));
-  const mg=sv('feMerge');mg.appendChild(sv('feMergeNode',{in:'b'}));mg.appendChild(sv('feMergeNode',{in:'SourceGraphic'}));
-  ft.appendChild(mg);defs.appendChild(ft);svg.appendChild(defs);
-
-  // Edges
-  const eG=sv('g');
-  g.ns.forEach(n=>n.ins.forEach(inp=>{
-    const f=ePt(inp,n.x,n.y),t=ePt(n,inp.x,inp.y);
-    const isActive=n.bA;const done=inp.fD&&n.fD;
-    const col=isActive?'#fda4af':done?'#86efac':'#e2e8f0';
-    const w=done?2.2:1.6;const ah=done?'url(#ahg)':'url(#ah)';
-    eG.appendChild(sv('line',{x1:f.x,y1:f.y,x2:t.x,y2:t.y,stroke:col,'stroke-width':w,'marker-end':ah,'stroke-linecap':'round',opacity:done?.92:.82}))}));
-  svg.appendChild(eG);
-
-  // Nodes
-  const nG=sv('g');
-  g.ns.forEach(n=>{
-    const grp=sv('g',{transform:`translate(${n.x},${n.y})`,'data-nid':n.id,class:'gnode',style:'cursor:pointer'});
-    const gm=n.geom||nodeGeom(n);
-    let fill,stroke,sw=2;
-    if(n.fA){fill='#a7f3d0';stroke='#059669';sw=3;grp.setAttribute('filter','url(#gl)')}
-    else if(n.bA){fill='#fecdd3';stroke='#e11d48';sw=3;grp.setAttribute('filter','url(#gl)')}
-    else if(n.bD&&n.tp!=='c'){fill='#ffe4e6';stroke='#fb7185'}
-    else if(n.fD){fill='#d1fae5';stroke='#34d399'}
-    else if(n.tp==='i'){fill='#e0e7ff';stroke='#818cf8'}
-    else if(n.tp==='c'){fill='#fef3c7';stroke='#fbbf24'}
-    else{fill='#f1f5f9';stroke='#94a3b8'}
-
-    if(gm.shape==='circle')grp.appendChild(sv('circle',{r:gm.r,fill,stroke,'stroke-width':sw}));
-    else grp.appendChild(sv('rect',{x:-gm.w/2,y:-gm.h/2,width:gm.w,height:gm.h,rx:gm.rx,fill,stroke,'stroke-width':sw}));
-    const fs=n.tp==='o'?(n.label.length>4?11:n.label.length>3?13:16):14;
-    grp.appendChild(sv('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':fs,'font-weight':'700',fill:'#334155'},n.label));
-
-    if(n.fD&&n.val!=null)grp.appendChild(badge(0,gm.h/2+18,fm(n.val),'#dcfce7','#047857',10,'fade-up'));
-    if(n.bD&&n.tp!=='c')grp.appendChild(badge(0,-(gm.h/2+18),`\u2207 ${fm(n.grad)}`,'#ffe4e6','#be123c',10,'fade-up'));
-    nG.appendChild(grp)});
-  svg.appendChild(nG);
-
-  // ======================== BACKWARD ANNOTATIONS ========================
-  if(bwdAnn){
-    const ann=sv('g',{class:'bwd-ann'});
-    const nd=bwdAnn.node;
-    const gm=nd.geom||nodeGeom(nd);
-
-    // Upstream badge above active node
-    ann.appendChild(badge(nd.x,nd.y-(gm.h/2+30),`up ${fm(bwdAnn.upstream)}`,'#e11d48','#fff',10,'fade-up'));
-
-    // For each input: backward arrow + gradient badge
-    bwdAnn.items.forEach((item,idx)=>{
-      const curve=backCurve(nd,item.target,idx,bwdAnn.items.length);
-      const offsetDir=curve.sign*(18+Math.abs(curve.spread)*4);
-      ann.appendChild(sv('path',{d:qPath(curve),fill:'none',stroke:'#7c3aed','stroke-width':2.5,'stroke-dasharray':'7 4',
-        'marker-end':'url(#ahv)',opacity:.88,class:'pulse-glow','stroke-linecap':'round'}));
-      const lp=qOffset(curve,.36,offsetDir),dp=qOffset(curve,.72,offsetDir*1.15);
-      ann.appendChild(badge(lp.x,lp.y,`\u2202 ${fm(item.local)}`,'#f59e0b','#78350f',9,'fade-up'));
-      ann.appendChild(badge(dp.x,dp.y,`\u2207 ${fm(item.downstream)}`,'#7c3aed','#fff',9,'fade-up'));
-    });
-
-    svg.appendChild(ann);
-  }
-
-  // Tooltip events
-  nG.querySelectorAll('.gnode').forEach(grp=>{
-    grp.addEventListener('mouseenter',e=>{const nid=parseInt(grp.dataset.nid);showTT(e,g.ns.find(n=>n.id===nid))});
-    grp.addEventListener('mousemove',e=>{const tt=$('tooltip');tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'});
-    grp.addEventListener('mouseleave',()=>{$('tooltip').style.display='none'})});
-}
-
-function badge(cx,cy,text,bg,fg,fs=10,cls=''){
-  const g=sv('g',cls?{class:cls}:{});
-  const tw=text.length*fs*0.56+16,th=fs+10;
-  g.appendChild(sv('rect',{x:cx-tw/2,y:cy-th/2,width:tw,height:th,rx:th/2,fill:bg,opacity:.93,
-    filter:'drop-shadow(0 1px 3px rgba(0,0,0,0.2))'}));
-  g.appendChild(sv('text',{x:cx,y:cy+1,'text-anchor':'middle','dominant-baseline':'central',
-    'font-size':fs,'font-weight':'700',fill:fg,'font-family':'IBM Plex Mono,monospace'},text));
-  return g}
-
-function showTT(e,n){if(!n)return;const tt=$('tooltip');
-let h=`<b style="color:#a5b4fc">${n.tp==='o'?n.op:n.label}</b> <span style="opacity:.4">#${n.id}</span>`;
-if(n.val!=null)h+=`<br>Val: <span style="color:#6ee7b7">${fm(n.val)}</span>`;
-if(n.bD&&n.tp!=='c')h+=`<br>Grad: <span style="color:#fca5a5">${fm(n.grad)}</span>`;
-tt.innerHTML=h;tt.style.display='block';tt.style.left=(e.clientX+12)+'px';tt.style.top=(e.clientY+12)+'px'}
-
-// =====================================================================
-//  EXAMPLES
-// =====================================================================
-const EX=[
-  {n:'Simple',        e:'(x * y) + z',   v:{x:2,y:3,z:4},         d:'Multiply then add'},
-  {n:'MSE Loss',      e:'(pred - target) * (pred - target)', v:{pred:2.5,target:3}, d:'Squared error'},
-  {n:'Sigmoid Neuron', e:'sigmoid(w1 * x1 + w2 * x2 + b)', v:{w1:0.5,w2:-0.3,x1:1,x2:2,b:0.1}, d:'Single neuron'},
-  {n:'ReLU Neuron',   e:'relu(w * x + b)', v:{w:1.5,x:-1,b:0.5},   d:'ReLU activation'},
-  {n:'Logistic Loss',  e:'-log(sigmoid(w * x + b))', v:{w:1,x:2,b:-1}, d:'Binary cross-entropy'},
-  {n:'CE (expanded)',  e:'-log(1 / (1 + exp(-(theta0 + theta1 * x1 + theta2 * x2))))', v:{theta0:1,theta1:1,theta2:2,x1:1,x2:2}, d:'Full logistic loss'},
-  {n:'Softplus',      e:'log(1 + exp(x))', v:{x:2},                d:'Smooth ReLU'},
-  {n:'Polynomial',    e:'x*x*x - 2*x*x + 3*x + 1', v:{x:2},       d:'Cubic x\u00B3-2x\u00B2+3x+1'},
-  {n:'Huber-like',    e:'sqrt(x * x + 0.01)', v:{x:0.5},           d:'Smooth L1'},
-  {n:'Tanh Neuron',   e:'tanh(w * x + b)', v:{w:1,x:0.5,b:0},      d:'Tanh activation'},
-];
-
-// =====================================================================
-//  APP
-// =====================================================================
-let S={g:null,tp:[],fi:0,bi:0,ph:'idle',dm:null,bwdAnn:null};
-let pTimer=null;
-const $=id=>document.getElementById(id);
-const subs=new Set();
-
-function varsNow(){const out={};$('var-bar').querySelectorAll('input').forEach(inp=>out[inp.dataset.v]=parseFloat(inp.value)||0);return out}
-function annState(){if(!S.bwdAnn)return null;return{
-  nodeId:S.bwdAnn.node.id,
-  upstream:S.bwdAnn.upstream,
-  items:S.bwdAnn.items.map(it=>({targetId:it.target.id,local:it.local,downstream:it.downstream,desc:it.desc}))
-}}
-function graphSnapshot(){
-  if(!S.g)return null;
-  return{
-    savedAt:new Date().toISOString(),
-    expression:$('expr-input').value.trim(),
-    phase:S.ph,
-    forwardIndex:S.fi,
-    backwardIndex:S.bi,
-    totalSteps:S.tp.length,
-    outputId:S.g.out.id,
-    outputValue:S.g.out.val,
-    variables:varsNow(),
-    infoText:$('info-box').textContent,
-    dimensions:S.dm?{width:S.dm.w,height:S.dm.h}:null,
-    backwardAnnotation:annState(),
-    nodes:S.g.ns.map(n=>({
-      id:n.id,type:n.tp,op:n.op,label:n.label,inputIds:n.ins.map(inp=>inp.id),
-      rank:n.rank,position:{x:n.x,y:n.y},value:n.val,grad:n.grad,
-      forwardDone:n.fD,backwardDone:n.bD,forwardActive:n.fA,backwardActive:n.bA
-    }))
-  }
-}
-function serializeCurrentSvg(){
-  if(!S.g)return null;
-  const svg=$('graph-svg').cloneNode(true);
-  svg.setAttribute('xmlns',NS);
-  return new XMLSerializer().serializeToString(svg)
-}
-function downloadText(text,name,type){
-  const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0);
-  return name
-}
-function fileStamp(){return new Date().toISOString().replace(/[:.]/g,'-')}
-function saveGraphJSON(name=`autograd-graph-${fileStamp()}.json`){
-  const snap=graphSnapshot();if(!snap)return null;
-  downloadText(JSON.stringify(snap,null,2),name,'application/json');return snap
-}
-function saveGraphSvg(name=`autograd-graph-${fileStamp()}.svg`){
-  const text=serializeCurrentSvg();if(!text)return null;
-  downloadText(text,name,'image/svg+xml');return text
-}
-function emitStateChange(reason){
-  const snap=graphSnapshot();if(!snap)return;
-  snap.reason=reason;
-  window.dispatchEvent(new CustomEvent('autograd:statechange',{detail:snap}));
-  subs.forEach(fn=>{try{fn(snap)}catch(err){console.error(err)}})
-}
-function phaseMeta(){
-  if(!S.g)return{key:'idle',label:'Idle',note:'Build a graph to begin.'};
-  const total=S.tp.length||0;
-  switch(S.ph){
-    case'idle':return{key:'idle',label:'Ready',note:`${total} nodes loaded. Start the forward pass.`};
-    case'forward':return{key:'forward',label:'Forward',note:`Resolving node ${Math.min(S.fi+1,total)} of ${total}.`};
-    case'fwd_done':return{key:'fwd_done',label:'Forward done',note:`Output = ${fm(S.g.out.val)}. Backprop is ready.`};
-    case'backward':return{key:'backward',label:'Backward',note:`Propagating gradient step ${Math.min(S.bi+1,total)} of ${total}.`};
-    case'bwd_done':return{key:'bwd_done',label:'Gradients ready',note:'All gradients computed. Export or inspect any variable now.'};
-    default:return{key:'idle',label:'Idle',note:'Build a graph to begin.'}
-  }
-}
-function bindAPI(){
-  window.AutogradPlayground={
-    getState:graphSnapshot,
-    snapshot:graphSnapshot,
-    serializeSVG:serializeCurrentSvg,
-    saveJSON:saveGraphJSON,
-    saveSVG:saveGraphSvg,
-    build(expr,vars={}){if(typeof expr==='string')$('expr-input').value=expr;buildFrom(vars);return graphSnapshot()},
-    loadExample(i){loadEx(i);return graphSnapshot()},
-    reset(){resetS();return graphSnapshot()},
-    forwardStep(){fwdStep();return graphSnapshot()},
-    forwardAll(){fwdAll();return graphSnapshot()},
-    backwardStep(){bwdStep();return graphSnapshot()},
-    backwardAll(){bwdAll();return graphSnapshot()},
-    subscribe(fn){if(typeof fn!=='function')throw new Error('Listener must be a function');subs.add(fn);return()=>subs.delete(fn)},
-    unsubscribe(fn){subs.delete(fn);return subs.size}
-  }
-}
-
-function initEx(){const row=$('examples-row');EX.forEach((x,i)=>{
-  const b=document.createElement('button');b.className='ex-btn';
-  b.innerHTML=`${x.n}<span class="ex-desc">${x.d}</span>`;b.title=x.e;
-  b.addEventListener('click',()=>loadEx(i));row.appendChild(b)})}
-
-function loadEx(i){document.querySelectorAll('.ex-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
-$('expr-input').value=EX[i].e;buildFrom(EX[i].v)}
-
-function buildFrom(dv){
-  const expr=$('expr-input').value.trim();if(!expr){info('Type an expression.','');return}
-  stopP();
-  try{const ast=parse(tokenize(expr));const g=buildG(ast);
-    const bar=$('var-bar');bar.innerHTML='';
-    g.vo.forEach(nm=>{const ch=document.createElement('div');ch.className='var-chip';
-      const sp=document.createElement('span');sp.textContent=nm+' =';ch.appendChild(sp);
-      const inp=document.createElement('input');inp.type='number';inp.step='any';inp.value=dv?.[nm]??1;
-      inp.dataset.v=nm;inp.addEventListener('change',()=>resetS());ch.appendChild(inp);bar.appendChild(ch)});
-    S.g=g;S.tp=topo(g.out);S.dm=layoutG(g);resetS(true);
-    $('graph-empty').style.display='none';$('graph-svg').style.display='block';$('legend').style.display='flex';
-    info('Graph built! Press F or click Fwd to start.','');
-    upUI();emitStateChange('build');
-  }catch(e){info('Error: '+e.message,'err')}}
-
-function resetS(skipEmit=false){if(!S.g)return;stopP();S.fi=0;S.bi=0;S.ph='idle';S.bwdAnn=null;
-  S.g.ns.forEach(n=>{n.fD=false;n.bD=false;n.fA=false;n.bA=false;n.grad=0;
-    if(n.tp==='c')n.val=n.val;else if(n.tp==='i')n.val=null;else n.val=null});
-  $('var-bar').querySelectorAll('input').forEach(inp=>{const nm=inp.dataset.v;if(S.g.vs[nm])S.g.vs[nm].val=parseFloat(inp.value)||0});
-  upUI();renderG($('graph-svg'),S.g,S.dm,null);$('grad-card').style.display='none';$('chain-rule-area').innerHTML='';
-  if(!skipEmit)emitStateChange('reset')}
-
-function fwdStep(){
-  if(!S.g)return;if(S.ph==='idle')S.ph='forward';if(S.ph!=='forward')return;
-  S.g.ns.forEach(n=>n.fA=false);S.bwdAnn=null;
-  if(S.fi>=S.tp.length){S.ph='fwd_done';upUI();return}
-  const nd=S.tp[S.fi];
-  if(nd.tp!=='i'&&nd.tp!=='c')nd.val=compV(nd);
-  nd.fD=true;nd.fA=true;
-  if(nd.tp==='i')info(`Fwd ${S.fi+1}/${S.tp.length}: Input "${nd.label}" = ${fm(nd.val)}`,'fwd');
-  else if(nd.tp==='c')info(`Fwd ${S.fi+1}/${S.tp.length}: Const = ${fm(nd.val)}`,'fwd');
-  else info(`Fwd ${S.fi+1}/${S.tp.length}: ${descOp(nd)}\n= ${fm(nd.val)}`,'fwd');
-  $('chain-rule-area').innerHTML='';
-  S.fi++;if(S.fi>=S.tp.length)S.ph='fwd_done';
-  upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('forward-step')}
-
-function fwdAll(){if(!S.g)return;stopP();S.g.ns.forEach(n=>n.fA=false);S.bwdAnn=null;
-  while(S.fi<S.tp.length){const n=S.tp[S.fi];if(n.tp!=='i'&&n.tp!=='c')n.val=compV(n);n.fD=true;S.fi++}
-  S.ph='fwd_done';info(`Forward complete. Output = ${fm(S.g.out.val)}\n\nPress B or Bwd to compute gradients.`,'fwd');
-  $('chain-rule-area').innerHTML='';upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('forward-all')}
-
-function bwdStep(){
-  if(!S.g)return;
-  if(S.ph==='fwd_done'){S.ph='backward';S.g.out.grad=1;S.bi=0}
-  if(S.ph!=='backward')return;
-  S.g.ns.forEach(n=>n.bA=false);
-  const rev=[...S.tp].reverse();
-  if(S.bi>=rev.length){S.ph='bwd_done';upUI();return}
-  const nd=rev[S.bi];nd.bA=true;nd.bD=true;
-
-  if(nd.tp==='o'){
-    const upstream=nd.grad;
-    const grads=lgrads(nd),descs=gfDesc(nd);
-    const items=grads.map((gr,i)=>({target:gr.t,local:gr.l,downstream:gr.g,desc:descs[i]||''}));
-
-    // Store annotation for SVG rendering
-    S.bwdAnn={node:nd,upstream,items};
-
-    // Propagate
-    grads.forEach(gr=>gr.t.grad+=gr.g);
-
-    // Info text
-    const posLabel=(n,i)=>{const p=nd.ins.length>1?['Left','Right'][i]:'';return`${p} "${n.label}" (=${fm(n.val)})`};
-    let txt=`Bwd ${S.bi+1}/${rev.length}: ${nd.op} node\n`;
-    txt+=`Accumulated grad = ${fm(upstream)}\n`;
-    info(txt,'bwd');
-
-    // Chain rule visual in sidebar
-    renderChainRule(nd,upstream,items);
-  } else if(nd.tp==='i'){
-    S.bwdAnn=null;
-    info(`Bwd ${S.bi+1}/${rev.length}: Variable "${nd.label}"\n\u2207 = ${fm(nd.grad)}`,'bwd');
-    $('chain-rule-area').innerHTML='';
-  } else {
-    S.bwdAnn=null;
-    info(`Bwd ${S.bi+1}/${rev.length}: Constant ${nd.label}`,'bwd');
-    $('chain-rule-area').innerHTML='';
-  }
-  S.bi++;if(S.bi>=rev.length){S.ph='bwd_done';showGT()}
-  upUI();renderG($('graph-svg'),S.g,S.dm,S.bwdAnn);emitStateChange('backward-step')}
-
-function bwdAll(){if(!S.g)return;stopP();
-  if(S.ph==='fwd_done'){S.ph='backward';S.g.out.grad=1;S.bi=0}
-  if(S.ph!=='backward')return;
-  S.g.ns.forEach(n=>n.bA=false);S.bwdAnn=null;
-  const rev=[...S.tp].reverse();
-  while(S.bi<rev.length){const nd=rev[S.bi];nd.bD=true;
-    if(nd.tp==='o')lgrads(nd).forEach(gr=>gr.t.grad+=gr.g);S.bi++}
-  S.ph='bwd_done';info('Backward complete! All gradients computed.','bwd');
-  $('chain-rule-area').innerHTML='';showGT();upUI();renderG($('graph-svg'),S.g,S.dm,null);emitStateChange('backward-all')}
-
-function renderChainRule(nd,upstream,items){
-  const area=$('chain-rule-area');
-  let h='<div class="chain-rule"><div style="font-weight:700;margin-bottom:6px;color:#334155">Chain Rule at this node:</div>';
-  items.forEach((it,i)=>{
-    const label=nd.ins.length>1?['Left','Right'][i]+': ':'';
-    h+=`<div class="cr-row">
-      <span style="color:#64748b;font-size:10px;min-width:36px">${label}</span>
-      <span class="cr-pill cr-upstream">${fm(upstream)}</span>
-      <span class="cr-arrow">\u00D7</span>
-      <span class="cr-pill cr-local">${fm(it.local)}</span>
-      <span class="cr-arrow">=</span>
-      <span class="cr-pill cr-downstream">${fm(it.downstream)}</span>
-      <span class="cr-arrow">\u2192</span>
-      <span style="font-weight:600;font-size:11px">${it.target.label}</span>
-    </div>`;
-    h+=`<div style="font-size:10px;color:#94a3b8;margin:0 0 4px 40px">${it.desc}</div>`;
-  });
-  h+=`<div style="margin-top:6px;padding-top:6px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;font-weight:600">
-    <span class="cr-pill cr-upstream">upstream</span> \u00D7
-    <span class="cr-pill cr-local">local</span> =
-    <span class="cr-pill cr-downstream">downstream</span></div></div>`;
-  area.innerHTML=h}
-
-function descOp(nd){
-  const nm=i=>{const n=nd.ins[i];return n.tp==='i'?n.label:n.tp==='c'?n.label:fm(n.val)};
-  const vl=i=>fm(nd.ins[i].val);
-  if(nd.ins.length===2)return`${nm(0)} ${nd.label} ${nm(1)}  =  ${vl(0)} ${nd.label} ${vl(1)}`;
-  if(nd.ins.length===1)return`${nd.op}(${nm(0)})  =  ${nd.op}(${vl(0)})`;
-  return`${nd.op}(${nd.ins.map((_,i)=>vl(i)).join(', ')})`}
-
-function info(t,tp){const b=$('info-box');b.textContent=t;b.className='info-box'+(tp==='fwd'?' fwd':tp==='bwd'?' bwd':tp==='err'?' err':'')}
-
-function showGT(){const tb=$('grad-table').querySelector('tbody');tb.innerHTML='';
-  S.g.vo.forEach(nm=>{const n=S.g.vs[nm];const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="font-weight:700">${nm}</td><td class="v-val">${fm(n.val)}</td><td class="v-grad" style="text-align:right">${fm(n.grad)}</td>`;
-    tb.appendChild(tr)});$('grad-card').style.display='block'}
-
-function toggleP(){if(pTimer){stopP();return}
-  const d=parseInt($('speed').value);$('btn-play').classList.add('playing');$('btn-play').innerHTML='&#9646;&#9646;';
-  pTimer=setInterval(()=>{if(S.ph==='idle'||S.ph==='forward')fwdStep();
-    else if(S.ph==='fwd_done'||S.ph==='backward')bwdStep();if(S.ph==='bwd_done')stopP()},d)}
-function stopP(){if(pTimer){clearInterval(pTimer);pTimer=null}$('btn-play').classList.remove('playing');$('btn-play').innerHTML='&#9654;'}
-
-function upUI(){const p=S.ph,h=!!S.g;
-  $('btn-fwd-step').disabled=!h||(p!=='idle'&&p!=='forward');$('btn-fwd-all').disabled=!h||(p!=='idle'&&p!=='forward');
-  $('btn-bwd-step').disabled=!h||(p!=='fwd_done'&&p!=='backward');$('btn-bwd-all').disabled=!h||(p!=='fwd_done'&&p!=='backward');
-  $('btn-reset').disabled=!h;$('btn-play').disabled=!h||p==='bwd_done';
-  const pf=$('pbar'),total=S.tp.length||1;
-  if(p==='idle'){pf.style.width='0%';pf.className='progress-fill'}
-  else if(p==='forward'||p==='fwd_done'){pf.style.width=`${(S.fi/total)*50}%`;pf.className='progress-fill fwd'}
-  else{pf.style.width=`${50+(S.bi/total)*50}%`;pf.className='progress-fill bwd'}
-  const meta=phaseMeta(),pill=$('phase-pill');
-  pill.textContent=meta.label;
-  pill.className='status-pill'+(meta.key&&meta.key!=='idle'?' '+meta.key:'');
-  $('status-note').textContent=meta.note}
-
-// =====================================================================
-//  EVENTS
-// =====================================================================
-$('btn-build').addEventListener('click',()=>buildFrom());
-$('btn-reset').addEventListener('click',resetS);
-$('btn-fwd-step').addEventListener('click',fwdStep);
-$('btn-fwd-all').addEventListener('click',fwdAll);
-$('btn-bwd-step').addEventListener('click',bwdStep);
-$('btn-bwd-all').addEventListener('click',bwdAll);
-$('btn-play').addEventListener('click',toggleP);
-$('expr-input').addEventListener('keydown',e=>{if(e.key==='Enter')buildFrom()});
-document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
-  if(e.key==='f'||e.key==='F')fwdStep();if(e.key==='b'||e.key==='B')bwdStep();
-  if(e.key==='r'||e.key==='R')resetS();if(e.key===' '){e.preventDefault();toggleP()}});
-
-// =====================================================================
-//  INIT
-// =====================================================================
-bindAPI();initEx();upUI();loadEx(0);
-</script>
+<script type="module" src="./js/app.js"></script>
 </body>
 </html>

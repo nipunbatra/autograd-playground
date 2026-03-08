@@ -1,0 +1,16 @@
+export const EXAMPLES = [
+  { c: 'Core', n: 'Simple', e: '(x * y) + z', v: { x: 2, y: 3, z: 4 }, d: 'Multiply then add' },
+  { c: 'Losses', n: 'MSE Loss', e: '(pred - target) * (pred - target)', v: { pred: 2.5, target: 3 }, d: 'Squared error' },
+  { c: 'Neurons', n: 'Sigmoid Neuron', e: 'sigmoid(w1 * x1 + w2 * x2 + b)', v: { w1: 0.5, w2: -0.3, x1: 1, x2: 2, b: 0.1 }, d: 'Single neuron' },
+  { c: 'Neurons', n: 'ReLU Neuron', e: 'relu(w * x + b)', v: { w: 1.5, x: -1, b: 0.5 }, d: 'ReLU activation' },
+  { c: 'Losses', n: 'Logistic Loss', e: '-log(sigmoid(w * x + b))', v: { w: 1, x: 2, b: -1 }, d: 'Binary cross-entropy' },
+  { c: 'Losses', n: 'CE (expanded)', e: '-log(1 / (1 + exp(-(theta0 + theta1 * x1 + theta2 * x2))))', v: { theta0: 1, theta1: 1, theta2: 2, x1: 1, x2: 2 }, d: 'Full logistic loss' },
+  { c: 'Smooth', n: 'Softplus', e: 'log(1 + exp(x))', v: { x: 2 }, d: 'Smooth ReLU' },
+  { c: 'Core', n: 'Polynomial', e: 'x*x*x - 2*x*x + 3*x + 1', v: { x: 2 }, d: 'Cubic x^3-2x^2+3x+1' },
+  { c: 'Smooth', n: 'Huber-like', e: 'sqrt(x * x + 0.01)', v: { x: 0.5 }, d: 'Smooth L1' },
+  { c: 'Neurons', n: 'Tanh Neuron', e: 'tanh(w * x + b)', v: { w: 1, x: 0.5, b: 0 }, d: 'Tanh activation' },
+  { c: 'Datasets', n: '2-Point Fit', e: '((w * x1 + b - y1) * (w * x1 + b - y1) + (w * x2 + b - y2) * (w * x2 + b - y2)) / 2', v: { w: 0.8, b: 0.2, x1: 1, y1: 2, x2: 2, y2: 2.8 }, d: 'Mini regression batch' },
+  { c: 'Datasets', n: '3-Point Mean', e: '(x1 + x2 + x3) / 3', v: { x1: 1, x2: 4, x3: 7 }, d: 'Tiny dataset average' },
+  { c: 'Datasets', n: '2-Point Logistic', e: '(-log(sigmoid(w * x1 + b)) + -log(sigmoid(w * x2 + b))) / 2', v: { w: 1.2, b: -0.7, x1: 1, x2: 2 }, d: 'Two-example log loss' },
+  { c: 'Core', n: 'Contrastive Mix', e: 'abs(a - b) + sqrt(c * c + 0.1)', v: { a: 2, b: -1, c: 0.4 }, d: 'Piecewise + smooth' },
+];
